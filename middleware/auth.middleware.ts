@@ -21,10 +21,11 @@ export const authenticateJWT = (request: AuthRequest, response: Response, next: 
 
   try {
     const decoded = jwt.verify(token, secret);
-    const { id } = decoded as { id: string; role: string };
+    const { id } = decoded as { id: string };
     request.id = id;
     next();
   } catch (err) {
+    console.log(err)
      response.status(401).json({ message: "Invalid token" });
   }
 };

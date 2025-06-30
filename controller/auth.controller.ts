@@ -13,6 +13,11 @@ export const registerController = async (request: Request, response: Response) =
 
     const account: accountInterface = request.body;
 
+    if(await findAccountByUsername(account.username)){
+        response.status(409).send("username already exists");
+        return
+    }
+
     try{
         const result = await createAccount(account);
         response.send(result)
@@ -45,7 +50,7 @@ export const loginController = async (request: Request, response: Response) => {
 
     const token = jwt.sign({ id: user._id }, secret, { expiresIn: "1h" });
 
-    response.send({fullname : user.fullname, role : user.role, token : token});
+    response.send({fullname : user.fullname, role : user.role, branch : user.branch , token : token});
 };
 
 
