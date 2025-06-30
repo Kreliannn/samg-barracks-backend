@@ -5,6 +5,7 @@ import fs from "fs";
 import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
+import { get } from "http";
 
 
 
@@ -39,7 +40,10 @@ export const createIngredientsController = async (request: AuthRequest, response
    
 
         await createIngredients({ name, stocks, branch: account.branch, img: url });
-        response.send("successfully uploaded");
+
+        const ingredients = await getIngredientsByBranch(account.branch);
+        
+        response.send(ingredients);
     } catch (error) {
         console.error(error);
         response.status(500).json({ error: 'Upload failed' });
