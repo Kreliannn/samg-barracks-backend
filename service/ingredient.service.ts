@@ -6,3 +6,7 @@ export const createIngredients = async (ingredientData: ingredientsInterface) =>
     return ingredients
 }
 
+export const getIngredientsByBranch = async (branch: string) => {
+    const ingredients = await Ingredients.find({ branch: branch })
+    return ingredients  
+}

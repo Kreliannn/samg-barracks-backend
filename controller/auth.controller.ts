@@ -48,7 +48,7 @@ export const loginController = async (request: Request, response: Response) => {
         return
     }  
 
-    const token = jwt.sign({ id: user._id }, secret, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, secret, { expiresIn: "1d" });
 
     response.send({fullname : user.fullname, role : user.role, branch : user.branch , token : token});
 };

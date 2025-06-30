@@ -13,6 +13,7 @@ export const authenticateJWT = (request: AuthRequest, response: Response, next: 
   const authHeader = request.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("No token provided");
      response.status(401).json({ message: "No token provided" });
      return
   }
