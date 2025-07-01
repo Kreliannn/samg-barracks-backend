@@ -5,7 +5,7 @@ import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
-import { createMenu, getMenuByBranch } from "../service/menu.service";
+import { createMenu, getMenuByBranch, updateMenu } from "../service/menu.service";
 
 export const createMenuController = async (request: AuthRequest, response: Response) => {
     try {
@@ -57,6 +57,38 @@ export const createMenuController = async (request: AuthRequest, response: Respo
     }
 };
 
+export const updateMenuController = async (request: AuthRequest, response: Response) => {
+    try {
+     
+        if(!request.id){
+            console.log("not autenitcated")
+            response.status(500).json({ error: 'not autenitcated' });
+            return;
+        }
+
+      
+        const { id, name, type, ingredients, price } = request.body;
+
+        const parsedIngredients: menuIngredientsInterface[] = ingredients ? ingredients : [];
+
+        const account = await findAccountById(request.id)
+
+        if(!account){
+            response.status(404).json({ error: 'Account not found' });
+            return;
+        }
+   
+       await updateMenu(id, name, parsedIngredients, type, price);
+        
+
+        const menu = await getMenuByBranch(account.branch);
+
+        response.send(menu);
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ error: 'Upload failed' });
+    }
+};
 
 
 export const getMenusController = async (request: AuthRequest, response: Response) => {
