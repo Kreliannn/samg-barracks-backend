@@ -7,7 +7,7 @@ import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
 import { createMenu, getMenuByBranch } from "../service/menu.service";
 
-export const createIngredientsController = async (request: AuthRequest, response: Response) => {
+export const createMenuController = async (request: AuthRequest, response: Response) => {
     try {
         if (!request.file) {
             response.status(400).json({ error: 'No file uploaded' });
@@ -29,6 +29,7 @@ export const createIngredientsController = async (request: AuthRequest, response
         const url = uploadResult.secure_url
         const { name, type, ingredients, price } = request.body;
 
+        const parsedIngredients: menuIngredientsInterface[] = ingredients ? JSON.parse(ingredients) : [];
 
         const account = await findAccountById(request.id)
 
@@ -39,7 +40,7 @@ export const createIngredientsController = async (request: AuthRequest, response
    
         await createMenu({
             name,
-            ingredients : ingredients,
+            ingredients : parsedIngredients,
             type,
             price,
             branch: account.branch,
@@ -55,3 +56,18 @@ export const createIngredientsController = async (request: AuthRequest, response
         response.status(500).json({ error: 'Upload failed' });
     }
 };
+
+
+
+export const getMenusController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    const menu = await getMenuByBranch(account?.branch || "");
+    response.send(menu);
+}

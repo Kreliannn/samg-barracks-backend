@@ -8,6 +8,7 @@ const menuSchema = new Schema({
         name : String,
         qty : Number
     }],
+    price : { type: Number, required: true },
     branch: { type: String, required: true },
     img : { type: String, required: true },
     type : { type: String, required: true }, 

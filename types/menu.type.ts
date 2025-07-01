@@ -1,6 +1,5 @@
 export interface menuIngredientsInterface {
     id : string,
-    name : string,
     qty : number
 }
 
