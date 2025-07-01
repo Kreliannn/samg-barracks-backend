@@ -1,6 +1,6 @@
 import { AuthRequest } from "../types/request.type";
 import { Request, Response } from "express";
-import { createIngredients , getIngredientsByBranch} from "../service/ingredient.service";
+import { createIngredients , getIngredientsByBranch, updateIngredients} from "../service/ingredient.service";
 import fs from "fs";
 import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
@@ -40,6 +40,38 @@ export const createIngredientsController = async (request: AuthRequest, response
    
 
         await createIngredients({ name, stocks, branch: account.branch, img: url });
+
+        const ingredients = await getIngredientsByBranch(account.branch);
+        
+        response.send(ingredients);
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ error: 'Upload failed' });
+    }
+        
+    
+};
+
+
+export const EditIngredientsController = async (request: AuthRequest, response: Response) => {
+    try {
+
+        if(!request.id){
+            console.log("not autenitcated")
+            response.status(500).json({ error: 'not autenitcated' });
+            return;
+        }
+
+        const { id, name, stocks } = request.body;
+
+        const account = await findAccountById(request.id)
+
+        if(!account){
+            response.status(404).json({ error: 'Account not found' });
+            return;
+        }
+   
+        await updateIngredients(id, name, stocks)
 
         const ingredients = await getIngredientsByBranch(account.branch);
         

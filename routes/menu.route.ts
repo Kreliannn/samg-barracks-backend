@@ -5,8 +5,7 @@ import { authenticateJWT } from "../middleware/auth.middleware";
 
 const route = Router()
 
-route.post("/ingredients", authenticateJWT, upload.single("file"), createIngredientsController)
-route.put("/ingredients", authenticateJWT, EditIngredientsController)
-route.get("/ingredients", authenticateJWT, getIngredientsController)
+route.post("/menu", authenticateJWT, upload.single("file"), createIngredientsController)
+
 
 export default route
