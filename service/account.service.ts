@@ -17,6 +17,8 @@ export const findAccountById = async (id: string) => {
     return account;
 }
 
+
+
 export const getAccountByBranch = async (branch: string) => {
     const accounts = await Account.find({ branch: branch });
     return accounts;

@@ -14,3 +14,14 @@ export const getIngredientsByBranch = async (branch: string) => {
 export const updateIngredients = async (id: string, name : string, stocks : number) => {
     const updatedIngredient = await Ingredients.findByIdAndUpdate(id, { name, stocks })
 }
+
+export const deductIngredientStocks = async (id: string, qty: number) => {
+    const ingredient = await Ingredients.findById(id);
+    if (!ingredient) {      
+        throw new Error("Ingredient not found");
+    }   
+    const newStock = ingredient.stocks - qty; 
+    ingredient.stocks = (newStock > 0 ) ? newStock : 0; 
+    await ingredient.save();
+    console.log(ingredient)
+}

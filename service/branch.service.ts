@@ -6,3 +6,7 @@ export const createBranch = async (branchName: string) => {
     return branch
 }
 
+export const getBranch = async () => {
+    const branch = await Branch.find();
+    return branch;
+}

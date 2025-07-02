@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { accountInterface } from "../types/account.type";
-import { createAccount, findAccountByUsername } from "../service/account.service";
+import { createAccount, findAccountByUsername, getAccountByBranch } from "../service/account.service";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import { AuthRequest } from "../types/request.type";
@@ -20,7 +20,8 @@ export const registerController = async (request: Request, response: Response) =
 
     try{
         const result = await createAccount(account);
-        response.send(result)
+        const accounts = await getAccountByBranch(result.branch);
+        response.send(accounts)
     } catch (err) {
         console.log(err);
         response.status(500).send("error occurred")
@@ -54,16 +55,7 @@ export const loginController = async (request: Request, response: Response) => {
 };
 
 
-export const testJwt =  (req: AuthRequest, res: Response) => {
 
-  if(!req.id  ) {
-    res.status(401).json({ message: "Unauthorized" });
-    return
-  }
-
-  res.send(req.id);
-  
-}
 
 
  

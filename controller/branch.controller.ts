@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { accountInterface } from "../types/account.type";
 import { AuthRequest } from "../types/request.type";
-import { createBranch } from "../service/branch.service";
+import { createBranch, getBranch } from "../service/branch.service";
 import { createAccount, findAccountByUsername } from "../service/account.service";
+
 
 export const createBranchController = async (request: AuthRequest, response: Response) => {
 
@@ -15,9 +16,10 @@ export const createBranchController = async (request: AuthRequest, response: Res
     }
 
     try{
-        await createBranch(branchName);
         await createAccount(account);
-        response.send("Branch and account created successfully");
+        await createBranch(branchName);
+        const branch = await getBranch();
+        response.send(branch);
     } catch (err) {
         console.log(err);
         response.status(500).send("error occurred")
@@ -25,3 +27,7 @@ export const createBranchController = async (request: AuthRequest, response: Res
     
 };
 
+export const getBranchController = async (request: AuthRequest, response: Response) => {
+    const branch = await getBranch()
+    response.send(branch)
+};
