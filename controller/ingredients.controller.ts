@@ -1,12 +1,16 @@
 import { AuthRequest } from "../types/request.type";
 import { Request, Response } from "express";
-import { createIngredients , getIngredientsByBranch, updateIngredients} from "../service/ingredient.service";
+import { createIngredients , getIngredientsByBranch, updateIngredients, deductIngredientStocks} from "../service/ingredient.service";
 import fs from "fs";
 import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { get } from "http";
 
+interface refillInterface {
+    id : string,
+    qty : number
+}
 
 
 export const createIngredientsController = async (request: AuthRequest, response: Response) => {
@@ -29,7 +33,7 @@ export const createIngredientsController = async (request: AuthRequest, response
         fs.unlinkSync(request.file.path);
 
         const url = uploadResult.secure_url
-        const { name, stocks } = request.body;
+        const { name, stocks, type } = request.body;
 
         const account = await findAccountById(request.id)
 
@@ -39,7 +43,7 @@ export const createIngredientsController = async (request: AuthRequest, response
         }
    
 
-        await createIngredients({ name, stocks, branch: account.branch, img: url });
+        await createIngredients({ name, stocks, branch: account.branch, img: url, type });
 
         const ingredients = await getIngredientsByBranch(account.branch);
         
@@ -96,4 +100,16 @@ export const getIngredientsController = async (request: AuthRequest, response: R
 
     const ingredients = await getIngredientsByBranch(account?.branch || "");
     response.send(ingredients);
+}
+
+
+
+
+export const deductIngredientController = async (request: AuthRequest, response: Response) => {
+    const res = request.body
+    const refills : refillInterface[] = res
+    refills.forEach( async (item) => {
+        await deductIngredientStocks(item.id, item.qty)
+    })
+    response.send("success")
 }
