@@ -20,6 +20,8 @@ export interface OrderItem {
 
 export interface OrderInterface {
   orders: OrderItem[];
+  vat : number;
+  total : number;
   subTotal: number;
   totalDiscount: number;
   grandTotal: number;

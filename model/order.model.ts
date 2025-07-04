@@ -8,7 +8,7 @@ const orderSchema = new Schema({
         ingredients: [{
             id : String,
             name : String,
-            qty : Number
+            qty : Number,
         }],
         price : { type: Number, required: true },
         branch: { type: String, required: true },
@@ -20,6 +20,8 @@ const orderSchema = new Schema({
         total : { type: Number, required: true },
     }],
     subTotal : { type: Number, required: true },
+    vat : Number,
+    total : Number,
     totalDiscount : { type: Number, required: true },
     grandTotal : { type: Number, required: true },
     branch: { type: String, required: true },

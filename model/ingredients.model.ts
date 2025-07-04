@@ -5,7 +5,7 @@ const ingredientsSchema = new Schema({
     stocks: { type: Number, required: true },
     branch: { type: String, required: true },
     img : { type: String, required: true },
-    type : { type: String, required: true },
+    type : { type: String, required: false },
 });
 
 

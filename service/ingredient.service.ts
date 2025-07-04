@@ -23,5 +23,4 @@ export const deductIngredientStocks = async (id: string, qty: number) => {
     const newStock = ingredient.stocks - qty; 
     ingredient.stocks = (newStock > 0 ) ? newStock : 0; 
     await ingredient.save();
-    console.log(ingredient)
 }
