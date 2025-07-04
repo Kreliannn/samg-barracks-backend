@@ -1,9 +1,9 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import { getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders} from "../service/order.service";
+import { getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
-import { OrderInterface , OrderItem} from "../types/orders";
+import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 
 export const createOrderController = async (request: AuthRequest, response: Response) => {
     if(!request.id)
@@ -24,7 +24,10 @@ export const createOrderController = async (request: AuthRequest, response: Resp
     })
 
     if(orderId){
+        const order : getOrderInterface = request.body
+        await updateOrder(orderId, order.total, order.subTotal, order.vat, order.grandTotal, order.totalDiscount, order.serviceFee)
         await insertOrders(orderId, request.body.orders);
+        console.log("exist")
         response.send("success");
         return
     }
@@ -37,7 +40,8 @@ export const createOrderController = async (request: AuthRequest, response: Resp
 }
 
 
-export const getOrderController = async (request: AuthRequest, response: Response) => {
+
+export const updateStatusOrderController = async (request: AuthRequest, response: Response) => {
     if(!request.id)
     {
         response.status(500).send("not authenticated")
@@ -52,7 +56,53 @@ export const getOrderController = async (request: AuthRequest, response: Respons
         return;
     }
 
-    const orders = await getOrdersByBranch(account.branch);
+    const { id } = request.body
+
+    await updateOrderStatus(id)
+
+    const orders = await getOrdersByBranch(account.branch, "active");
+
+   response.send(orders)
+}
+
+
+export const getActiveOrderController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const orders = await getOrdersByBranch(account.branch, "active");
+
+    response.send(orders)
+}
+
+
+export const getCompletedOrderController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const orders = await getOrdersByBranch(account.branch, "completed");
 
     response.send(orders)
 }

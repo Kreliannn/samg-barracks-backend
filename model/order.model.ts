@@ -20,15 +20,18 @@ const orderSchema = new Schema({
         total : { type: Number, required: true },
     }],
     subTotal : { type: Number, required: true },
-    vat : Number,
-    total : Number,
+    vat : { type: Number, required: true },
+    total : { type: Number, required: true },
     totalDiscount : { type: Number, required: true },
     grandTotal : { type: Number, required: true },
     branch: { type: String, required: true },
     table   : { type: String, required: true },
     orderType : { type: String, required: true }, 
     cashier : { type: String, required: true },
-    date : { type: String, required: true }
+    date : { type: String, required: true },
+    time : { type: String, required: true },
+    status : { type: String, required: true },
+    serviceFee : { type: Number, required: true },
 });
 
 

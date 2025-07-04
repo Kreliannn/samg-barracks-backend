@@ -29,5 +29,27 @@ export interface OrderInterface {
   table: string;
   orderType: string;
   cashier: string;
-  date : string
+  date : string,
+  time : string,
+  status : string,
+  serviceFee : number
+}
+
+
+export interface getOrderInterface {
+  _id : string,
+  orders: OrderItem[];
+  vat : number;
+  total : number;
+  subTotal: number;
+  totalDiscount: number;
+  grandTotal: number;
+  branch: string;
+  table: string;
+  orderType: string;
+  cashier: string;
+  date : string,
+  time : string,
+  status : string,
+  serviceFee : number
 }
