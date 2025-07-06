@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { accountInterface } from "../types/account.type";
 import { AuthRequest } from "../types/request.type";
-import { createBranch, getBranch } from "../service/branch.service";
+import { createBranch, getBranch, findTableByBranch, updateTables, getBranchByBranch } from "../service/branch.service";
 import { createAccount, findAccountByUsername } from "../service/account.service";
-
+import { findAccountById } from "../service/account.service";
 
 export const createBranchController = async (request: AuthRequest, response: Response) => {
 
@@ -26,6 +26,61 @@ export const createBranchController = async (request: AuthRequest, response: Res
     }
     
 };
+
+export const getTablesController = async (request: AuthRequest, response: Response) => {
+
+   if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
+    const tables = await findTableByBranch(account.branch)
+    response.send(tables)
+};
+
+export const updateTableController = async (request: AuthRequest, response: Response) => {
+
+   if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
+    const branch = await getBranchByBranch(account.branch)
+
+     if(!branch)
+    {
+        response.status(500).send("no branch")
+        return
+    }
+
+    const id = branch._id.toString()
+
+    const { tables } = request.body
+    
+    await updateTables(id, tables)
+
+    response.send("succes")
+   
+};
+
 
 export const getBranchController = async (request: AuthRequest, response: Response) => {
     const branch = await getBranch()
