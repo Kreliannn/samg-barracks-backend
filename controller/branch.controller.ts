@@ -77,7 +77,7 @@ export const updateTableController = async (request: AuthRequest, response: Resp
     
     await updateTables(id, tables)
 
-    response.send("succes")
+    response.send("succes   ")
    
 };
 

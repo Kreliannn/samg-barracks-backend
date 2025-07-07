@@ -1,5 +1,5 @@
 import Order from "../model/order.model";
-import { OrderInterface, OrderItem } from "../types/orders";
+import { OrderInterface, OrderItem , getOrderInterface} from "../types/orders";
 
 
 export const createOrderService = async (orderData: OrderInterface) => {
@@ -22,7 +22,7 @@ export const insertOrders = async (orderId: string, orders: OrderItem[]) => {
 }
 
 export const getOrdersByBranch = async (branch: string, status : string) => {
-    const orders = await Order.find({ branch , status});
+    const orders :   getOrderInterface[] = await Order.find({ branch , status});
     return orders;
 }
 

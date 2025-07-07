@@ -4,6 +4,7 @@ import { findAccountById } from "../service/account.service";
 import { getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
+import { get30DaysSales } from "../utils/customFunction";
 
 export const createOrderController = async (request: AuthRequest, response: Response) => {
     if(!request.id)
@@ -27,7 +28,6 @@ export const createOrderController = async (request: AuthRequest, response: Resp
         const order : getOrderInterface = request.body
         await updateOrder(orderId, order.total, order.subTotal, order.vat, order.grandTotal, order.totalDiscount, order.serviceFee)
         await insertOrders(orderId, request.body.orders);
-        console.log("exist")
         response.send("success");
         return
     }
@@ -105,4 +105,16 @@ export const getCompletedOrderController = async (request: AuthRequest, response
     const orders = await getOrdersByBranch(account.branch, "completed");
 
     response.send(orders)
+}
+
+
+export const getMonthSalesController = async (request: AuthRequest, response: Response) => {
+    
+    const branch = "Main Branch"
+
+    const orders = await getOrdersByBranch(branch, "completed");
+
+   const sales30Days = await get30DaysSales(orders)
+
+    response.send(sales30Days)
 }

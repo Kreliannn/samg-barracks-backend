@@ -34,7 +34,7 @@ export const createMenuController = async (request: AuthRequest, response: Respo
         const account = await findAccountById(request.id)
 
         if(!account){
-            response.status(404).json({ error: 'Account not found' });
+            response.status(404).send({ error: 'user not found' });
             return;
         }
    
@@ -46,7 +46,6 @@ export const createMenuController = async (request: AuthRequest, response: Respo
             branch: account.branch,
             img: url
         })
-        
 
         const menu = await getMenuByBranch(account.branch);
 
