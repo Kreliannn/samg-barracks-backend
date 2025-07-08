@@ -1,5 +1,5 @@
-import { getOrderInterface , OrderInterface} from "../types/orders"
-
+import { getOrderInterface , OrderInterface, OrderItem} from "../types/orders"
+import { getMenuById } from "../service/menu.service"
 
 
 export const get30DaysSales = (orders : getOrderInterface[]) => {
@@ -101,4 +101,88 @@ export const getYearlySales = (orders : getOrderInterface[]) => {
     })
 
     return yearlySales
+}
+
+
+
+export const getTopCategory = async (orders : getOrderInterface[]) => {
+ 
+    interface topCategoryInterface {
+        category : string,
+        sold : number
+    }
+
+    const topCategory : topCategoryInterface[] = []
+
+    orders.forEach((order) => {
+        order.orders.forEach((menu) => {
+
+            const category = menu.type
+        
+            if(topCategory.some((item) => item.category === category)){
+                topCategory.forEach((item, index) => {
+                    if(item.category == category){
+                        topCategory[index].sold += menu.qty
+                    }
+                })
+            } else {
+                const newCategory = {
+                    category : menu.type,
+                    sold : menu.qty
+                }
+                topCategory.push(newCategory)
+            }
+        })
+    })
+
+    return topCategory
+}
+
+
+export const getToTalSales = (orders : getOrderInterface[]) => {
+ 
+    let totalSales = 0
+
+    orders.forEach((item) => {
+        totalSales += item.grandTotal
+    })
+
+    return totalSales
+}
+
+
+export const getThisMonthSales = (orders : getOrderInterface[]) => {
+ 
+    let MonthtotalSales = 0
+
+    const currentMonth =  String(new Date().getMonth() + 1).padStart(2, '0')
+
+
+    orders.forEach((item) => {
+        const itemMonth = item.date.split("-")[1]
+        if(itemMonth == currentMonth){
+            MonthtotalSales += item.grandTotal
+        }
+    })
+
+    return MonthtotalSales
+}
+
+
+
+export const getTodaySales = (orders : getOrderInterface[]) => {
+ 
+    let todaySales = 0
+
+    const formattedDate = new Date().toISOString().split('T')[0];
+
+    const today = formattedDate.toString()
+
+    orders.forEach((item) => {
+        if(item.date == today){
+            todaySales += item.grandTotal
+        }
+    })
+
+    return todaySales
 }

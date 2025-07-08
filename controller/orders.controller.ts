@@ -4,7 +4,7 @@ import { findAccountById } from "../service/account.service";
 import { getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
-import { get30DaysSales, getYearlySales, getTopMenu } from "../utils/customFunction";
+import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
 
 export const createOrderController = async (request: AuthRequest, response: Response) => {
     if(!request.id)
@@ -114,7 +114,7 @@ export const getMonthSalesController = async (request: AuthRequest, response: Re
 
     const orders = await getOrdersByBranch(branch, "completed");
 
-   const data = await getTopMenu(orders)
+    const data = await getTodaySales(orders)
 
     response.send(data)
 }

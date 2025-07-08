@@ -1,5 +1,5 @@
 import Menu from "../model/menu.model"
-import { menuInterface  , menuIngredientsInterface} from "../types/menu.type"
+import { menuInterface  , menuIngredientsInterface,} from "../types/menu.type"
 
 export const createMenu = async (menuData: menuInterface) => {
     const menu = await Menu.create(menuData)
@@ -8,6 +8,11 @@ export const createMenu = async (menuData: menuInterface) => {
 
 export const getMenuByBranch = async (branch: string) => {
     const menu = await Menu.find({ branch: branch })
+    return menu  
+}
+
+export const getMenuById = async (id : string) => {
+    const menu : menuInterface  = await Menu.findById(id) as menuInterface
     return menu  
 }
 
