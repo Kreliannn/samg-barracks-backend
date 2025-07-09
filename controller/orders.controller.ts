@@ -13,6 +13,14 @@ export const createOrderController = async (request: AuthRequest, response: Resp
         return
     }
 
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
     const orderId  = await checkIfTableExist(request.body.table, request.body.branch);
 
     const orders : OrderItem[] = request.body.orders;
@@ -20,7 +28,7 @@ export const createOrderController = async (request: AuthRequest, response: Resp
     orders.forEach(async (order) => {
         const orderQuantity = order.qty
         order.ingredients.forEach(async (ingredient) => {
-            await deductIngredientStocks(ingredient.id, (orderQuantity * ingredient.qty));
+            await deductIngredientStocks(ingredient.id, (orderQuantity * ingredient.qty), account.branch);
         })
     })
 
@@ -105,7 +113,7 @@ export const getCompletedOrderController = async (request: AuthRequest, response
     const orders = await getOrdersByBranch(account.branch, "completed");
 
     response.send(orders)
-    
+
 }
 
 

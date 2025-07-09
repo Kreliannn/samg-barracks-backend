@@ -4,6 +4,7 @@ import { AuthRequest } from "../types/request.type";
 import { createBranch, getBranch, findTableByBranch, updateTables, getBranchByBranch } from "../service/branch.service";
 import { createAccount, findAccountByUsername } from "../service/account.service";
 import { findAccountById } from "../service/account.service";
+import { addBranchIngredientStock } from "../service/ingredient.service";
 
 export const createBranchController = async (request: AuthRequest, response: Response) => {
 
@@ -18,6 +19,7 @@ export const createBranchController = async (request: AuthRequest, response: Res
     try{
         await createAccount(account);
         await createBranch(branchName);
+        await addBranchIngredientStock(branchName)
         const branch = await getBranch();
         response.send(branch);
     } catch (err) {

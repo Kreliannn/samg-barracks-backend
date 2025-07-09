@@ -6,8 +6,8 @@ export const createMenu = async (menuData: menuInterface) => {
     return menu
 }
 
-export const getMenuByBranch = async (branch: string) => {
-    const menu = await Menu.find({ branch: branch })
+export const getMenu = async () => {
+    const menu = await Menu.find()
     return menu  
 }
 

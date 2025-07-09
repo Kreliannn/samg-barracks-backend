@@ -5,7 +5,7 @@ import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
-import { createMenu, getMenuByBranch, updateMenu } from "../service/menu.service";
+import { createMenu, getMenu, updateMenu } from "../service/menu.service";
 
 export const createMenuController = async (request: AuthRequest, response: Response) => {
     try {
@@ -47,7 +47,7 @@ export const createMenuController = async (request: AuthRequest, response: Respo
             img: url
         })
 
-        const menu = await getMenuByBranch(account.branch);
+        const menu = await getMenu();
 
         response.send(menu);
     } catch (error) {
@@ -80,7 +80,7 @@ export const updateMenuController = async (request: AuthRequest, response: Respo
        await updateMenu(id, name, parsedIngredients, type, price);
         
 
-        const menu = await getMenuByBranch(account.branch);
+        const menu = await getMenu();
 
         response.send(menu);
     } catch (error) {
@@ -99,6 +99,6 @@ export const getMenusController = async (request: AuthRequest, response: Respons
 
     const account = await findAccountById(request.id);
 
-    const menu = await getMenuByBranch(account?.branch || "");
+    const menu = await getMenu();
     response.send(menu);
 }
