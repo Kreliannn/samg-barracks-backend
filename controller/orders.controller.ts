@@ -105,6 +105,7 @@ export const getCompletedOrderController = async (request: AuthRequest, response
     const orders = await getOrdersByBranch(account.branch, "completed");
 
     response.send(orders)
+    
 }
 
 

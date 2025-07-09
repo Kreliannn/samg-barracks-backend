@@ -67,7 +67,7 @@ export const updateTableController = async (request: AuthRequest, response: Resp
 
      if(!branch)
     {
-        response.status(500).send("no branch")
+        response.status(500).send("no branch found")
         return
     }
 
