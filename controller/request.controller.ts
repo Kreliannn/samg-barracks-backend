@@ -1,11 +1,22 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
-import { createRequest } from "../service/request.service";
+import { createRequest, findRequestByBranch } from "../service/request.service";
 import { findAccountById } from "../service/account.service";
 
 
 
 export const createRequestController = async (request: AuthRequest, response: Response) => {
+
+    const requestOrder = request.body
+
+    await createRequest(requestOrder)
+
+    response.send(requestOrder)
+}
+
+
+
+export const getRequuestByBranchController = async (request: AuthRequest, response: Response) => {
     if(!request.id)
     {
         response.status(500).send("not authenticated")
@@ -20,12 +31,14 @@ export const createRequestController = async (request: AuthRequest, response: Re
         return;
     }
 
-    const requestOrder = request.body
+    const orderRequest = await findRequestByBranch(account.branch)
+    console.log(account.branch)
+    console.log(orderRequest)
 
-    await createRequest(requestOrder)
-
-    response.send(requestOrder)
+    response.send(orderRequest)
 }
+  
+
   
 
 
