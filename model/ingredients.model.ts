@@ -9,6 +9,7 @@ const ingredientsSchema = new Schema({
     branch: { type: String, required: true },
     img : { type: String, required: true },
     type : { type: String, required: false },
+    price : Number
 });
 
 

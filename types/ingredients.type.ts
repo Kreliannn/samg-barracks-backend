@@ -10,5 +10,6 @@ export interface ingredientsInterface {
     stocks : branchStockInterface[],
     branch : string,
     type : string,
-    img : string
+    img : string,
+    price: number
 }

@@ -35,7 +35,7 @@ export const createIngredientsController = async (request: AuthRequest, response
         fs.unlinkSync(request.file.path);
 
         const url = uploadResult.secure_url
-        const { name, type } = request.body;
+        const { name, type , price} = request.body;
 
         const account = await findAccountById(request.id)
 
@@ -47,7 +47,7 @@ export const createIngredientsController = async (request: AuthRequest, response
         const stocks : branchStockInterface[] = await createIngredientBranchData()
    
 
-        await createIngredients({ name, stocks, branch: account.branch, img: url, type });
+        await createIngredients({ name, stocks, branch: account.branch, img: url, type , price});
 
         const ingredients = await getIngredientsByBranch();
         
@@ -71,7 +71,7 @@ export const EditIngredientsController = async (request: AuthRequest, response: 
             return;
         }
 
-        const { id, name, stocks } = request.body;
+        const { id, name, stocks, price } = request.body;
 
         const account = await findAccountById(request.id)
 
@@ -80,7 +80,7 @@ export const EditIngredientsController = async (request: AuthRequest, response: 
             return;
         }
    
-        await updateIngredients(id, name, stocks, account.branch)
+        await updateIngredients(id, name, stocks, price ,account.branch)
 
         const ingredients = await getIngredientsByBranch();
         

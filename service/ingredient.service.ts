@@ -13,7 +13,7 @@ export const getIngredientsByBranch = async () => {
 }
 
 //update
-export const updateIngredients = async (id: string, name : string, stocks : number, branch : string) => {
+export const updateIngredients = async (id: string, name : string, stocks : number, price : number,branch : string) => {
     const ingredient = await Ingredients.findById(id)
     if(!ingredient) return 
     ingredient.stocks.forEach((item, index) => {
@@ -22,6 +22,7 @@ export const updateIngredients = async (id: string, name : string, stocks : numb
         }
     })
     ingredient.name = name
+    ingredient.price = price
     await ingredient.save()
 }
 
