@@ -10,7 +10,8 @@ const RequestSchema = new Schema({
     }],
     total : Number,
     date : String,
-    status : String
+    status : String,
+    manager : String
 });
 
 

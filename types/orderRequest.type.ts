@@ -11,7 +11,8 @@ export interface requestInterface {
     }[],
     total : number,
     date : string,
-    status : string
+    status : string,
+    manager : string
 }
 
 
@@ -26,7 +27,8 @@ export interface getRequestInterface {
     }[],
     total : number,
     date : string,
-    status : string
+    status : string,
+    manager : string
 }
 
 

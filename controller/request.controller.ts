@@ -32,8 +32,7 @@ export const getRequuestByBranchController = async (request: AuthRequest, respon
     }
 
     const orderRequest = await findRequestByBranch(account.branch)
-    console.log(account.branch)
-    console.log(orderRequest)
+
 
     response.send(orderRequest)
 }
