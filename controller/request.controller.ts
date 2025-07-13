@@ -1,6 +1,6 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
-import { createRequest, findRequestByBranch } from "../service/request.service";
+import { createRequest, findRequestByBranch, findRequest, updateRequestStatus } from "../service/request.service";
 import { findAccountById } from "../service/account.service";
 
 
@@ -31,13 +31,19 @@ export const getRequuestByBranchController = async (request: AuthRequest, respon
         return;
     }
 
-    const orderRequest = await findRequestByBranch(account.branch)
 
+    const orderRequest = (account.branch != "Main Branch") ? await findRequestByBranch(account.branch) : await findRequest()
 
     response.send(orderRequest)
 }
   
-
+export const updateReqeustStatusController = async (request: AuthRequest, response: Response) => {
+    const {id, status} = request.body
+   updateRequestStatus(id, status)
+   response.send("succes")
+   
+}
+  
   
 
 

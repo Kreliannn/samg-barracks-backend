@@ -10,3 +10,11 @@ export const createRequest = async ( request : requestInterface) => {
 export const findRequestByBranch = async ( branch  : string) => {
     return await Request.find({ branch : branch })
 }
+
+export const findRequest = async ( ) => {
+    return await Request.find()
+}
+
+export const updateRequestStatus = async ( id : string, status : string ) => {
+   await Request.findByIdAndUpdate(id, {status})
+}
