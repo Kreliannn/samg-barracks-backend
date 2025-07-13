@@ -1,5 +1,5 @@
 import Menu from "../model/menu.model"
-import { menuInterface  , menuIngredientsInterface,} from "../types/menu.type"
+import { menuInterface  , menuIngredientsInterface, menuVariantInterface,} from "../types/menu.type"
 
 export const createMenu = async (menuData: menuInterface) => {
     const menu = await Menu.create(menuData)
@@ -24,3 +24,12 @@ export const updateMenu = async (id: string, name: string, ingredients: menuIngr
     menu.variants[index].ingredients = ingredients as any
     await menu.save()
 }
+
+
+export const addMenuVariant = async (id: string, variant : menuVariantInterface) => {
+    const menu = await Menu.findById(id) 
+    if(!menu ) return 
+    menu.variants.push(variant)
+    await menu.save()
+}
+

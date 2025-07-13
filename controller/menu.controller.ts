@@ -5,7 +5,7 @@ import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
-import { createMenu, getMenu, updateMenu } from "../service/menu.service";
+import { createMenu, getMenu, updateMenu, addMenuVariant } from "../service/menu.service";
 import { menuVariantInterface } from "../types/menu.type";
 
 export const createMenuController = async (request: AuthRequest, response: Response) => {
@@ -92,5 +92,22 @@ export const getMenusController = async (request: AuthRequest, response: Respons
     const account = await findAccountById(request.id);
 
     const menu = await getMenu();
+    response.send(menu);
+}
+
+
+export const addMenuVariantController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const { variants , id } = request.body
+
+    await addMenuVariant(id, variants)
+
+    const menu = await getMenu();
+    
     response.send(menu);
 }
