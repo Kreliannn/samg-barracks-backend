@@ -3,18 +3,29 @@ export interface menuIngredientsInterface {
     qty : number
 }
 
+export interface menuVariantInterface{
+    variant : string,
+    price : number
+    ingredients : menuIngredientsInterface[]
+}
+
+
 export interface menuInterface {
     name : string,
-    ingredients : menuIngredientsInterface[],
     type : string,
-    price : number,
+    variants : menuVariantInterface[],
     branch : string,
     img : string
 }
 
-
-
-
+export interface getMenuInterface {
+    _id : string,
+    name : string,
+    type : string,
+    variants : menuVariantInterface[],
+    branch : string,
+    img : string
+}
 
 
 

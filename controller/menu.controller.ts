@@ -6,6 +6,7 @@ import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
 import { createMenu, getMenu, updateMenu } from "../service/menu.service";
+import { menuVariantInterface } from "../types/menu.type";
 
 export const createMenuController = async (request: AuthRequest, response: Response) => {
     try {
@@ -27,9 +28,9 @@ export const createMenuController = async (request: AuthRequest, response: Respo
         fs.unlinkSync(request.file.path);
 
         const url = uploadResult.secure_url
-        const { name, type, ingredients, price } = request.body;
+        const { name, type, variants } = request.body;
 
-        const parsedIngredients: menuIngredientsInterface[] = ingredients ? JSON.parse(ingredients) : [];
+        const menuVariants: menuVariantInterface[] = variants ? JSON.parse(variants) : [];
 
         const account = await findAccountById(request.id)
 
@@ -40,9 +41,8 @@ export const createMenuController = async (request: AuthRequest, response: Respo
    
         await createMenu({
             name,
-            ingredients : parsedIngredients,
+            variants : menuVariants,
             type,
-            price,
             branch: account.branch,
             img: url
         })
@@ -66,20 +66,12 @@ export const updateMenuController = async (request: AuthRequest, response: Respo
         }
 
       
-        const { id, name, type, ingredients, price } = request.body;
+        const { id, name, index, ingredients, price } = request.body;
 
         const parsedIngredients: menuIngredientsInterface[] = ingredients ? ingredients : [];
-
-        const account = await findAccountById(request.id)
-
-        if(!account){
-            response.status(404).json({ error: 'Account not found' });
-            return;
-        }
-   
-       await updateMenu(id, name, parsedIngredients, type, price);
+    
+        await updateMenu(id, name, parsedIngredients, index, price);
         
-
         const menu = await getMenu();
 
         response.send(menu);

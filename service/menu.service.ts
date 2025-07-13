@@ -16,7 +16,11 @@ export const getMenuById = async (id : string) => {
     return menu  
 }
 
-export const updateMenu = async (id: string, name: string, ingredients: menuIngredientsInterface[], type: string, price: number) => {
-    const updatedMenu = await Menu.findByIdAndUpdate(id, { name, ingredients, type, price })
-    return updatedMenu
+export const updateMenu = async (id: string, name: string, ingredients: menuIngredientsInterface[], index: number, price: number) => {
+    const menu = await Menu.findById(id) 
+    if(!menu ) return 
+    menu.name = name
+    menu.variants[index].price = price
+    menu.variants[index].ingredients = ingredients as any
+    await menu.save()
 }
