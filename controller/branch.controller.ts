@@ -12,7 +12,7 @@ export const createBranchController = async (request: AuthRequest, response: Res
     const branchName = account.branch;
 
      if(await findAccountByUsername(account.username)){
-        response.status(409).send("username already exists");
+        response.status(409).send("username already exist");
         return
     }
 
