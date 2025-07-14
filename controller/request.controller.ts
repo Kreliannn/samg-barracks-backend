@@ -10,7 +10,26 @@ export const createRequestController = async (request: AuthRequest, response: Re
 
     await createRequest(requestOrder)
 
-    response.send(requestOrder)
+
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+
+    const orderRequest =  await findRequestByBranch(account.branch) 
+
+    response.send(orderRequest)
+
 }
 
 
@@ -79,7 +98,7 @@ export const CompletedReqeustStatusController = async (request: AuthRequest, res
    
     const newOrderRequest =  await findRequestByBranch(branch)
 
-    response.send(orderRequest)
+    response.send(newOrderRequest)
 }
   
 
