@@ -3,9 +3,9 @@ import {Schema, model} from "mongoose";
 const RequestSchema = new Schema({
     branch : String,
     request : [{
-        _id : String,
+        _id : { type: String, required: true },
         name : String,
-        quantity : Number,
+        quantity :{ type: Number, required: true },
         price : Number
     }],
     total : Number,

@@ -15,6 +15,10 @@ export const findRequest = async ( ) => {
     return await Request.find()
 }
 
+export const findByIdRequest = async ( id : string ) => {
+    return await Request.findById(id)
+}
+
 export const updateRequestStatus = async ( id : string, status : string ) => {
    await Request.findByIdAndUpdate(id, {status})
 }

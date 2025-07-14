@@ -29,13 +29,30 @@ export const updateIngredients = async (id: string, name : string, stocks : numb
 export const deductIngredientStocks = async (id: string, qty: number, branch : string) => {
     const ingredient = await Ingredients.findById(id);
     if (!ingredient) {      
-        throw new Error("Ingredient not found");
+       return
     }   
 
     ingredient.stocks.forEach((item, index) => {
         if(item.branch == branch && ingredient.stocks[index].stock){
             const newStock = ingredient.stocks[index].stock - qty; 
             ingredient.stocks[index].stock = (newStock > 0 ) ? newStock : 0; 
+        }
+    })
+
+    await ingredient.save();
+}
+
+export const addIngredientStocks = async (id: string, qty: number, branch : string) => {
+    const ingredient = await Ingredients.findById(id);
+    if (!ingredient) {    
+        console.log("not found")  
+        return
+    }   
+
+    ingredient.stocks.forEach((item, index) => {
+        if (item.branch === branch) {
+            const currentStock = ingredient.stocks[index].stock ?? 0; 
+            ingredient.stocks[index].stock = currentStock + qty;
         }
     })
 
