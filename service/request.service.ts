@@ -11,6 +11,10 @@ export const findRequestByBranch = async ( branch  : string) => {
     return await Request.find({ branch : branch })
 }
 
+export const findRequestById = async ( id  : string) => {
+    return await Request.findById(id)
+}
+
 export const findRequest = async ( ) => {
     return await Request.find()
 }

@@ -1,6 +1,6 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
-import { createRequest, findRequestByBranch, findRequest, updateRequestStatus , findByIdRequest} from "../service/request.service";
+import { createRequest, findRequestByBranch, findRequest, updateRequestStatus , findByIdRequest, findRequestById} from "../service/request.service";
 import { findAccountById } from "../service/account.service";
 import { deductIngredientStocks, addBranchIngredientStock, addIngredientStocks } from "../service/ingredient.service";
 
@@ -53,6 +53,17 @@ export const getRequuestByBranchController = async (request: AuthRequest, respon
     const orderRequest = (account.branch != "Main Branch") ? await findRequestByBranch(account.branch) : await findRequest()
 
     response.send(orderRequest)
+}
+
+
+export const getRequuestByIdController = async (request: AuthRequest, response: Response) => {
+    const { id } = request.body
+    try{
+        const requestItem = await findRequestById(id)
+        response.send(requestItem)
+    } catch {
+        response.status(500).send("error")
+    }
 }
   
 export const updateReqeustStatusController = async (request: AuthRequest, response: Response) => {
