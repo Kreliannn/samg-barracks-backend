@@ -29,7 +29,7 @@ export const get30DaysSales = (orders : getOrderInterface[]) => {
 
     const sortDailySales = dailySales.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    const last30DaysSales = sortDailySales.slice(-3);
+    const last30DaysSales = sortDailySales.slice(-20);
 
     return last30DaysSales
 }
@@ -105,7 +105,7 @@ export const getYearlySales = (orders : getOrderInterface[]) => {
 
 
 
-export const getTopCategory = async (orders : getOrderInterface[]) => {
+export const getTopCategory =  (orders : getOrderInterface[]) => {
  
     interface topCategoryInterface {
         category : string,

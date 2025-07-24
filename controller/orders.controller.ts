@@ -117,13 +117,21 @@ export const getCompletedOrderController = async (request: AuthRequest, response
 }
 
 
-export const getMonthSalesController = async (request: AuthRequest, response: Response) => {
+export const getBranchSalesController = async (request: AuthRequest, response: Response) => {
     
-    const branch = "Main Branch"
+    const { branch } = request.params
 
     const orders = await getOrdersByBranch(branch, "completed");
 
-    const data = await getTodaySales(orders)
+    console.log(getTopCategory(orders))
 
-    response.send(data)
+    response.send({
+        todaySales : getTodaySales(orders),
+        totalSales :  getToTalSales(orders),
+        thisMonthSales :  getThisMonthSales(orders),
+        last30days : get30DaysSales(orders),
+        topCategory :  getTopCategory(orders),
+        topMenu : getTopMenu(orders),
+        yearlySales : getYearlySales(orders)
+    })
 }

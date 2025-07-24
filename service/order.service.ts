@@ -50,3 +50,23 @@ export const updateOrder = async (id: string, total : number, subTotal : number,
 export const updateOrderStatus = async ( id:string ) => {
     await Order.findByIdAndUpdate(id, { status : "completed" })
 }
+
+
+export const editDate = async () => {
+  const allOrders = await Order.find({ branch : "branch 1"});
+  if (!allOrders) return;
+
+  const endDay = 24;
+
+  for (let i = 0; i < allOrders.length; i++) {
+    const order = await Order.findById(allOrders[i]._id);
+    if (!order) continue;
+
+    const day = Math.min(10 + i, endDay);
+    const formattedDate = `2025-07-${String(day).padStart(2, "0")}`;
+
+    order.date = formattedDate; // Assuming `date` is a String or Date field
+    await order.save();
+  }
+};
+
