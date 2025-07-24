@@ -125,3 +125,31 @@ export const getManagerDashboardController = async (request: AuthRequest, respon
         toShipRequests: toShipRequest.length
     })
 };
+
+
+
+export const getCashierDashboardController = async (request: AuthRequest, response: Response) => {
+   
+     if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
+    const orders = await getOrdersByBranch(account.branch, "completed")
+
+    const activeTable =  await getOrdersByBranch(account.branch, "active")
+
+    response.send({ 
+        activeTatble:(activeTable.length),
+        salesToday: (await getToTalSales(orders)).toLocaleString(),
+    })
+};
