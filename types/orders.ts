@@ -5,6 +5,7 @@ export interface OrderIngredient {
 }
 
 export interface OrderItem {
+  item_id : string,
   _id : string;
   name: string;
   ingredients: OrderIngredient[];

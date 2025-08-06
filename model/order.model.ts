@@ -3,6 +3,7 @@ import {Schema, model} from "mongoose";
 
 const orderSchema = new Schema({
     orders : [{
+        item_id : { type: String, required: true },
         _id : { type: String, required: true },
         name: { type: String, required: true },
         ingredients: [{

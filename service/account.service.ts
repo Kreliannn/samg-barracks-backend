@@ -23,3 +23,8 @@ export const getAccountByBranch = async (branch: string) => {
     const accounts = await Account.find({ branch: branch });
     return accounts;
 }
+
+export const deleteAccountById = async (id: string) => {
+    await Account.findByIdAndDelete(id)
+}
+

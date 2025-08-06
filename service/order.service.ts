@@ -70,3 +70,26 @@ export const editDate = async () => {
   }
 };
 
+
+export const popOrderItemAndGetTotal = async (order_id : string, item_id : string) => {
+  const order = await Order.findById(order_id)
+  if(!order) return  0
+  order.orders.forEach((item) => {
+    if(item.item_id == item_id){  
+      console.log(item)
+      console.log("test")
+    }
+  })
+
+  order.orders.pull({ item_id: item_id }); 
+  await order.save();
+};
+
+
+
+export const updateOrderGrandTotal = async (order_id : string, total : number) => {
+  const order = await Order.findById(order_id)
+  if(!order) return
+  order.grandTotal -= total
+  await order.save();
+};

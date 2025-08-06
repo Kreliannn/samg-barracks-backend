@@ -1,7 +1,7 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import { getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
+import { updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
@@ -134,4 +134,17 @@ export const getBranchSalesController = async (request: AuthRequest, response: R
         topMenu : getTopMenu(orders),
         yearlySales : getYearlySales(orders)
     })
+}
+
+
+
+export const refundOrderontroller = async (request: AuthRequest, response: Response) => {
+    
+   const { branch, order_id, item_id } = request.body
+
+   await popOrderItemAndGetTotal(order_id, item_id)
+
+   const orders = await getOrdersByBranch(branch, "active");
+
+   response.send(orders)
 }
