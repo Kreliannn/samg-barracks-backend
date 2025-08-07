@@ -1,7 +1,7 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import { updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
+import { updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
@@ -24,6 +24,8 @@ export const createOrderController = async (request: AuthRequest, response: Resp
     const orderId  = await checkIfTableExist(request.body.table, request.body.branch);
 
     const orders : OrderItem[] = request.body.orders;
+
+    console.log(request.body)
 
     orders.forEach(async (order) => {
         const orderQuantity = order.qty
@@ -64,9 +66,11 @@ export const updateStatusOrderController = async (request: AuthRequest, response
         return;
     }
 
-    const { id } = request.body
+    const { id , paymentMethod } = request.body
 
     await updateOrderStatus(id)
+
+    await updatePaymentMethod(id, paymentMethod)
 
     const orders = await getOrdersByBranch(account.branch, "active");
 

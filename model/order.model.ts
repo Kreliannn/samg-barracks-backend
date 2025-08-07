@@ -33,6 +33,7 @@ const orderSchema = new Schema({
     time : { type: String, required: true },
     status : { type: String, required: true },
     serviceFee : { type: Number, required: true },
+    paymentMethod : { type: String, required: true },
 });
 
 

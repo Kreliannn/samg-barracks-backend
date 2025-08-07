@@ -51,6 +51,9 @@ export const updateOrderStatus = async ( id:string ) => {
     await Order.findByIdAndUpdate(id, { status : "completed" })
 }
 
+export const updatePaymentMethod = async ( id : string , paymentMethod : string) => {
+    await Order.findByIdAndUpdate(id, { paymentMethod })
+}
 
 export const editDate = async () => {
   const allOrders = await Order.find({ branch : "branch 1"});
