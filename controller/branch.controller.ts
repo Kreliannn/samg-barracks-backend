@@ -7,7 +7,7 @@ import { findAccountById } from "../service/account.service";
 import { addBranchIngredientStock } from "../service/ingredient.service";
 import { getMenu } from "../service/menu.service";
 import { getIngredientsByBranch } from "../service/ingredient.service";
-import { getTodaySales, getToTalSales } from "../utils/customFunction";
+import { getTodaySales, getToTalSales, getTodayDiscount } from "../utils/customFunction";
 import { getOrdersByBranch } from "../service/order.service";
 import { findRequest, findRequestByBranch } from "../service/request.service";
 
@@ -117,12 +117,14 @@ export const getManagerDashboardController = async (request: AuthRequest, respon
     const pendingRequest = orderRequest.filter((item) => item.status == "pending")
     const toShipRequest = orderRequest.filter((item) => item.status == "to ship")
 
+    console.log("test")
     response.send({ 
         totalIngredients: (await getIngredientsByBranch()).length,
         totalMenus: (await getMenu()).length,
         salesToday: (await getToTalSales(orders)).toLocaleString(),
         pendingRequests: pendingRequest.length,
-        toShipRequests: toShipRequest.length
+        toShipRequests: toShipRequest.length,
+        discountToday : (await getTodayDiscount(orders))
     })
 };
 

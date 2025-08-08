@@ -186,3 +186,29 @@ export const getTodaySales = (orders : getOrderInterface[]) => {
 
     return todaySales
 }
+
+
+export const getTodayDiscount = (orders : getOrderInterface[]) => {
+ 
+    let todayDiscount = 0
+
+    console.log("test 22")
+
+    const formattedDate = new Date().toISOString().split('T')[0];
+
+    const today = formattedDate.toString()
+
+    orders.forEach((item) => {
+        if(item.date == today){
+            item.orders.forEach((order) => {
+                console.log(order)
+                if(order.discountType != "none"){
+                    todayDiscount += 1
+                }
+            })
+        }
+    })
+
+    return todayDiscount
+}
+
