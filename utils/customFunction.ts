@@ -201,7 +201,6 @@ export const getTodayDiscount = (orders : getOrderInterface[]) => {
     orders.forEach((item) => {
         if(item.date == today){
             item.orders.forEach((order) => {
-                console.log(order)
                 if(order.discountType != "none"){
                     todayDiscount += 1
                 }

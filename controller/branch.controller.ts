@@ -116,8 +116,8 @@ export const getManagerDashboardController = async (request: AuthRequest, respon
     const orderRequest =  (account.branch == "Main Branch") ? await findRequest() : await findRequestByBranch(account.branch)
     const pendingRequest = orderRequest.filter((item) => item.status == "pending")
     const toShipRequest = orderRequest.filter((item) => item.status == "to ship")
-
-    console.log("test")
+    
+  
     response.send({ 
         totalIngredients: (await getIngredientsByBranch()).length,
         totalMenus: (await getMenu()).length,
