@@ -17,6 +17,7 @@ export interface OrderItem {
   discountType: string;
   qty: number;
   total: number;
+  vat : number
 }
 
 export interface OrderInterface {

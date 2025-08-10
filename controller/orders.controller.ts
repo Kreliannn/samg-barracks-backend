@@ -146,9 +146,9 @@ export const refundOrderontroller = async (request: AuthRequest, response: Respo
     
    const { branch, order_id, item_id } = request.body
 
-   await popOrderItemAndGetTotal(order_id, item_id)
+   const table = await popOrderItemAndGetTotal(order_id, item_id)
 
    const orders = await getOrdersByBranch(branch, "active");
 
-   response.send(orders)
+   response.send({orders,table})
 }

@@ -79,16 +79,21 @@ export const popOrderItemAndGetTotal = async (order_id : string, item_id : strin
   if(!order) return  0
   order.orders.forEach((item) => {
     if(item.item_id == item_id){  
-      console.log(item)
-      console.log("test")
+      order.grandTotal -= item.total
+      order.totalDiscount -= item.discount
+      order.vat -=  item.vat
     }
   })
 
   order.orders.pull({ item_id: item_id }); 
+  
+  if((order.orders.length - 1) == 0){
+    await Order.findByIdAndDelete(order_id)
+    return order.table
+  } 
   await order.save();
+  return "none"
 };
-
-
 
 export const updateOrderGrandTotal = async (order_id : string, total : number) => {
   const order = await Order.findById(order_id)

@@ -19,6 +19,7 @@ const orderSchema = new Schema({
         discountType : { type: String, required: true },
         qty : { type: Number, required: true },
         total : { type: Number, required: true },
+        vat : { type: Number, required: true },
     }],
     subTotal : { type: Number, required: true },
     vat : { type: Number, required: true },
