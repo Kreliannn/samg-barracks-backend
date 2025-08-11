@@ -26,6 +26,13 @@ export const getOrdersByBranch = async (branch: string, status : string) => {
     return orders;
 }
 
+export const getTodayOrdersByBranch = async (branch: string, status : string) => {
+  const formattedDate = new Date().toISOString().split('T')[0];
+  const date = formattedDate.toString()
+  const orders :   getOrderInterface[] = await Order.find({ branch , status, date});
+  return orders;
+}
+
 export const updateOrder = async (id: string, total : number, subTotal : number, vat : number, grandTotal : number, totalDiscount : number, serviceFee : number ) => {
     const orders = await Order.findById(id);
     if(orders)
@@ -79,7 +86,11 @@ export const popOrderItemAndGetTotal = async (order_id : string, item_id : strin
   if(!order) return  0
   order.orders.forEach((item) => {
     if(item.item_id == item_id){  
-      order.grandTotal -= item.total
+      order.subTotal -= item.total
+      const subTotal = order.subTotal 
+      const serviceFee = subTotal * 0.10
+      order.serviceFee = serviceFee
+      order.grandTotal = subTotal + serviceFee
       order.totalDiscount -= item.discount
       order.vat -=  item.vat
     }
