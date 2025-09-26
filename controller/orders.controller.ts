@@ -1,7 +1,7 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import { mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
+import { popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
@@ -188,19 +188,41 @@ export const mergeOrderontroller = async (request: AuthRequest, response: Respon
 
    
     for (const item of ids) {
-    await mergeOrders(id, item);
+        await mergeOrders(id, item);
     }
 
+    
  
    const orders = await getOrdersByBranch(account.branch, "active");
-
-   console.log(orders.length)
+    
 
    response.send(orders)
 }
 
 
 
+
+
+
+
+export const splitOrderontroller = async (request: AuthRequest, response: Response) => {
+    
+   const id : string = request.body.id
+   const ids : string[] = request.body.item_ids
+   const branch = request.body.branch
+   const order = request.body.order
+
+   
+    for (const item of ids) {
+        await popOrderItem(id, item);
+    }
+
+    await createOrderService(order)
+
+   const orders = await getOrdersByBranch(branch, "active");
+
+   response.send(orders)
+}
 
 
 

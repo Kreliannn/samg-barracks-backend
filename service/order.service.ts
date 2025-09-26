@@ -139,3 +139,27 @@ export const mergeOrders = async (order1_id : string, order2_id : string) => {
   await order1.save();
   await Order.findByIdAndDelete(order2_id);
 };
+
+
+
+export const popOrderItem = async (order_id : string, item_id : string) => {
+  const order = await Order.findById(order_id)
+  if(!order) return  0
+  order.orders.forEach((item) => {
+    if(item.item_id == item_id){  
+      order.subTotal -= item.total
+
+      const subTotal = order.subTotal 
+      const serviceFee = subTotal * 0.10
+        
+      order.serviceFee = serviceFee
+      order.grandTotal = subTotal + serviceFee
+      order.totalDiscount -= item.discount
+      order.vat -=  item.vat
+    }
+  })
+
+  order.orders.pull({ item_id: item_id }); 
+  
+  await order.save();
+};
