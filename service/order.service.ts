@@ -118,3 +118,24 @@ export const updateOrderGrandTotal = async (order_id : string, total : number) =
   order.grandTotal -= total
   await order.save();
 };
+
+
+export const mergeOrders = async (order1_id : string, order2_id : string) => {
+  const order1 = await Order.findById(order1_id)
+  const order2 = await Order.findById(order2_id)
+  if(!order1 || !order2) return  0
+
+  order2.orders.forEach((order) => {
+    order1.orders.push(order)
+  })
+
+  order1.subTotal += order2.subTotal
+  order1.vat += order2.vat  
+  order1.total += order2.total
+  order1.totalDiscount += order2.totalDiscount
+  order1.grandTotal += order2.grandTotal
+  order1.serviceFee += order2.serviceFee 
+
+  await order1.save();
+  await Order.findByIdAndDelete(order2_id);
+};
