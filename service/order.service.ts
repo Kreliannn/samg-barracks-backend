@@ -58,6 +58,10 @@ export const updateOrderStatus = async ( id:string ) => {
     await Order.findByIdAndUpdate(id, { status : "completed" })
 }
 
+export const updateOrderTable = async ( id:string, table : string ) => {
+    await Order.findByIdAndUpdate(id, { table })
+}
+
 export const updatePaymentMethod = async ( id : string , paymentMethod : string) => {
     await Order.findByIdAndUpdate(id, { paymentMethod })
 }
@@ -73,7 +77,7 @@ export const editDate = async () => {
     if (!order) continue;
 
     const day = Math.min(10 + i, endDay);
-    const formattedDate = `2025-07-${String(day).padStart(2, "0")}`;
+    const formattedDate = `2025-09-${String(day).padStart(2, "0")}`;
 
     order.date = formattedDate; // Assuming `date` is a String or Date field
     await order.save();
@@ -87,8 +91,10 @@ export const popOrderItemAndGetTotal = async (order_id : string, item_id : strin
   order.orders.forEach((item) => {
     if(item.item_id == item_id){  
       order.subTotal -= item.total
+
       const subTotal = order.subTotal 
       const serviceFee = subTotal * 0.10
+        
       order.serviceFee = serviceFee
       order.grandTotal = subTotal + serviceFee
       order.totalDiscount -= item.discount

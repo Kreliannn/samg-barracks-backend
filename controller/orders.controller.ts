@@ -1,7 +1,7 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import {getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
+import {updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
@@ -151,4 +151,16 @@ export const refundOrderontroller = async (request: AuthRequest, response: Respo
    const orders = await getOrdersByBranch(branch, "active");
 
    response.send({orders,table})
+}
+
+
+export const moveOrderontroller = async (request: AuthRequest, response: Response) => {
+    
+   const { branch, id, table } = request.body
+
+  await updateOrderTable(id, table)
+ 
+   const orders = await getOrdersByBranch(branch, "active");
+
+   response.send(orders)
 }

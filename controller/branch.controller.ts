@@ -146,12 +146,18 @@ export const getCashierDashboardController = async (request: AuthRequest, respon
         return
     }
 
+    const today = new Date();
+    const ymd = today.toISOString().split("T")[0]; 
+  
+
     const orders = await getOrdersByBranch(account.branch, "completed")
 
     const activeTable =  await getOrdersByBranch(account.branch, "active")
 
+    const ordersToday = orders.filter((item) => item.date == ymd)
+
     response.send({ 
         activeTatble:(activeTable.length),
-        salesToday: (await getToTalSales(orders)).toLocaleString(),
+        salesToday: (await getToTalSales(ordersToday)).toLocaleString(),
     })
 };
