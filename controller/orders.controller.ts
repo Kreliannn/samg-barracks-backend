@@ -1,7 +1,7 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import { popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
+import { getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
@@ -121,6 +121,28 @@ export const getCompletedOrderController = async (request: AuthRequest, response
 }
 
 
+export const getOrderHistoryController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const orders = await getTodayCompletedAndCanceledOrder(account.branch);
+
+    response.send(orders)
+
+}
+
+
 export const getBranchSalesController = async (request: AuthRequest, response: Response) => {
     
     const { branch } = request.params
@@ -201,10 +223,6 @@ export const mergeOrderontroller = async (request: AuthRequest, response: Respon
 
 
 
-
-
-
-
 export const splitOrderontroller = async (request: AuthRequest, response: Response) => {
     
    const id : string = request.body.id
@@ -226,6 +244,16 @@ export const splitOrderontroller = async (request: AuthRequest, response: Respon
 
 
 
+
+
+export const cancelOrderontroller = async (request: AuthRequest, response: Response) => {
+    
+    const { id } = request.params
+
+    await toggleOrderStatus(id)
+   
+    response.send("sucess")
+}
 
 
 

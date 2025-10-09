@@ -33,6 +33,13 @@ export const getTodayOrdersByBranch = async (branch: string, status : string) =>
   return orders;
 }
 
+export const getTodayCompletedAndCanceledOrder = async (branch: string) => {
+  const formattedDate = new Date().toISOString().split('T')[0];
+  const date = formattedDate.toString()
+  const orders :   getOrderInterface[] = await Order.find({ branch ,  status: { $in: ["completed", "canceled"] }, date});
+  return orders;
+}
+
 export const updateOrder = async (id: string, total : number, subTotal : number, vat : number, grandTotal : number, totalDiscount : number, serviceFee : number ) => {
     const orders = await Order.findById(id);
     if(orders)
@@ -56,6 +63,16 @@ export const updateOrder = async (id: string, total : number, subTotal : number,
 
 export const updateOrderStatus = async ( id:string ) => {
     await Order.findByIdAndUpdate(id, { status : "completed" })
+}
+
+export const toggleOrderStatus= async ( id:string ) => {
+    const order = await Order.findById(id)
+    if(order?.status == "completed"){
+      await Order.findByIdAndUpdate(id, { status : "canceled" })
+    } else {
+      await Order.findByIdAndUpdate(id, { status : "completed" })
+    }
+    
 }
 
 export const updateOrderTable = async ( id:string, table : string ) => {

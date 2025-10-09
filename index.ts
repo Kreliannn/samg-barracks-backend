@@ -18,7 +18,7 @@ app.use(routes)
 mongoose.connect(mongodb_uri)
 
 app.get('/', async (request: Request, response: Response) => {
-  response.send("working sserver...........")
+  response.send("working server...........")
 });
 
 

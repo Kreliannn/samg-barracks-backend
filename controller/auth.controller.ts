@@ -35,6 +35,7 @@ export const registerController = async (request: Request, response: Response) =
 export const loginController = async (request: Request, response: Response) => {
 
     const { username, password} = request.body;
+    
 
     const user = await findAccountByUsername(username);
     
