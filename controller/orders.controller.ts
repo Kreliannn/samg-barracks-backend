@@ -1,7 +1,7 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import { getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
+import {  updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
@@ -251,6 +251,19 @@ export const cancelOrderontroller = async (request: AuthRequest, response: Respo
     const { id } = request.params
 
     await toggleOrderStatus(id)
+   
+    response.send("sucess")
+}
+
+
+export const applyDiscountToOrderontroller = async (request: AuthRequest, response: Response) => {
+    
+    const { orderId, itemId } = request.body
+
+    await applyDiscountToExisitngOrder(orderId, itemId)
+
+    await updateOrderFields(orderId)
+ 
    
     response.send("sucess")
 }

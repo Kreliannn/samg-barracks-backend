@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getOrderHistoryController , cancelOrderontroller,splitOrderontroller ,mergeOrderontroller ,moveOrderontroller,refundOrderontroller,createOrderController, getActiveOrderController, getCompletedOrderController, updateStatusOrderController, getBranchSalesController} from "../controller/orders.controller";
+import { applyDiscountToOrderontroller , getOrderHistoryController , cancelOrderontroller,splitOrderontroller ,mergeOrderontroller ,moveOrderontroller,refundOrderontroller,createOrderController, getActiveOrderController, getCompletedOrderController, updateStatusOrderController, getBranchSalesController} from "../controller/orders.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { editDate } from "../service/order.service";
 
@@ -11,6 +11,7 @@ route.get("/order/active", authenticateJWT,   getActiveOrderController)
 route.get("/order/completed", authenticateJWT,   getCompletedOrderController)
 route.get("/order/orderHistory", authenticateJWT,   getOrderHistoryController)
 route.patch("/order/refund", authenticateJWT,  refundOrderontroller )
+route.put("/order/applyDiscount", authenticateJWT,  applyDiscountToOrderontroller )
 route.put("/order/cancel/:id", authenticateJWT,  cancelOrderontroller )
 route.put("/order/move", authenticateJWT,  moveOrderontroller )
 route.put("/order/merge", authenticateJWT,  mergeOrderontroller )

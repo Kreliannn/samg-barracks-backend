@@ -209,3 +209,39 @@ export const getTodayDiscount = (orders : getOrderInterface[]) => {
     return todayDiscount
 }
 
+
+export function generateId() {
+    const timestamp = Math.floor(Date.now() / 1000).toString(16);
+    return (
+      timestamp +
+      "xxxxxxxxxxxxxxxx".replace(/x/g, () => {
+        return Math.floor(Math.random() * 16).toString(16);
+      })
+    ).toLowerCase();
+  }
+
+
+
+  export const getTotalWithVat = (items : OrderItem[] ) => {
+    let total = 0
+    items.forEach((item) => {
+      total += (item.price * item.qty)
+    })
+    return total
+}
+
+export const getTotaldiscount= (items : OrderItem[] ) => {
+  let totalDiscount = 0
+  items.forEach((item) => {
+    totalDiscount += item.discount
+  })
+  return totalDiscount
+}
+
+export const getTotalVat= (items : OrderItem[] ) => {
+  let totalVat = 0
+  items.forEach((item) => {
+    totalVat += item.vat
+  })
+  return totalVat
+}

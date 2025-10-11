@@ -1,6 +1,6 @@
 import Order from "../model/order.model";
 import { OrderInterface, OrderItem , getOrderInterface} from "../types/orders";
-
+import { generateId , getTotaldiscount, getTotalWithVat, getTotalVat} from "../utils/customFunction";
 
 export const createOrderService = async (orderData: OrderInterface) => {
     const order = await Order.create(orderData);
@@ -10,6 +10,10 @@ export const createOrderService = async (orderData: OrderInterface) => {
 export const checkIfTableExist = async (table : string, branch : string) => {
     const order = await Order.findOne({ table, branch, status : "active" });
     return order?._id.toString();
+}
+
+export const findOrderById = async (id : string) => {
+    return Order.findById(id)
 }
 
 export const insertOrders = async (orderId: string, orders: OrderItem[]) => {
@@ -180,3 +184,80 @@ export const popOrderItem = async (order_id : string, item_id : string) => {
   
   await order.save();
 };
+
+
+export const applyDiscountToExisitngOrder = async (orderId : string ,ItemId : string) => {
+
+  const order = await findOrderById(orderId)
+  if(!order) return
+
+  let popItem = false
+
+  order.orders.forEach((item) => {
+      if(item.item_id == ItemId){
+
+          if(item.qty <= 1) popItem = true
+
+          item.qty -= 1
+          item.total -= item.price
+          item.vat = item.total * 0.12
+
+          const itemPriceVat = item.price * 0.12
+
+          const itemWithoutVat = item.price - itemPriceVat
+  
+          const discountValue = itemWithoutVat * 0.20; 
+          const discountedPrice = itemWithoutVat - discountValue; 
+
+          const newItem : OrderItem = {
+              item_id : generateId(),
+              _id : item._id,
+              name: item.name,
+              ingredients: [],
+              price: item.price,
+              branch: item.branch,
+              img: item.img,
+              type: item.type,
+              discount: discountValue,
+              discountType: "Discounted",
+              qty: 1,
+              total: discountedPrice,
+              vat : 0
+          }
+
+          order.orders.push(newItem) 
+      }
+  })
+
+  if (popItem) {
+    const index = order.orders.findIndex((item) => item.item_id === ItemId);
+    if (index !== -1) order.orders.splice(index, 1);
+  } 
+
+  await order.save()
+}
+
+
+export const updateOrderFields = async (orderId : string ) => {
+
+  const order = await findOrderById(orderId)
+  if(!order) return
+
+  const orders = order.orders.map(o => o.toObject()) as unknown as OrderItem[];
+
+  const totalWithVat = getTotalWithVat(orders);
+  const subTotal = getTotalWithVat(orders);
+  const totalDiscount = getTotaldiscount(orders);
+  const vat = getTotalVat(orders);
+  const serviceFee = subTotal * 0.1;
+  const discountedTotal = (totalWithVat - totalDiscount) + serviceFee;
+
+  order.total = totalWithVat
+  order.vat = vat
+  order.subTotal = subTotal
+  order.grandTotal = discountedTotal
+  order.totalDiscount = totalDiscount
+  order.serviceFee =serviceFee
+
+  await order.save()
+}
