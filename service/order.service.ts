@@ -37,9 +37,7 @@ export const getTodayOrdersByBranch = async (branch: string, status : string) =>
   return orders;
 }
 
-export const getTodayCompletedAndCanceledOrder = async (branch: string) => {
-  const formattedDate = new Date().toISOString().split('T')[0];
-  const date = formattedDate.toString()
+export const getTodayCompletedAndCanceledOrder = async (branch: string, date : string) => {
   const orders :   getOrderInterface[] = await Order.find({ branch ,  status: { $in: ["completed", "canceled"] }, date});
   return orders;
 }

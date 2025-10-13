@@ -17,7 +17,7 @@ export interface OrderItem {
   discountType: string;
   qty: number;
   total: number;
-  vat : number
+  vat : number;
 }
 
 
@@ -37,6 +37,7 @@ export interface OrderInterface {
   status : string,
   serviceFee : number,
   paymentMethod : string,
+  orderNumber : number
 }
 
 
@@ -57,4 +58,5 @@ export interface getOrderInterface {
   status : string,
   serviceFee : number,
   paymentMethod : string,
+  orderNumber : number
 }

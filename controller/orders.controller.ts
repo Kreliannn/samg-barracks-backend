@@ -1,10 +1,11 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import {  updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus} from "../service/order.service";
+import {  updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus, findOrderById} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
+import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.service";
 
 export const createOrderController = async (request: AuthRequest, response: Response) => {
     if(!request.id)
@@ -25,7 +26,6 @@ export const createOrderController = async (request: AuthRequest, response: Resp
 
     const orders : OrderItem[] = request.body.orders;
 
-    console.log(request.body)
 
     orders.forEach(async (order) => {
         const orderQuantity = order.qty
@@ -38,15 +38,21 @@ export const createOrderController = async (request: AuthRequest, response: Resp
         const order : getOrderInterface = request.body
         await updateOrder(orderId, order.total, order.subTotal, order.vat, order.grandTotal, order.totalDiscount, order.serviceFee)
         await insertOrders(orderId, request.body.orders);
-        response.send("success");
-        return
+        const updatedOrder = await findOrderById(orderId)
+        response.send(updatedOrder)
+        return 
     }
 
- 
-    
-    await createOrderService(request.body)
 
-   response.send("success")
+    const newOrder : OrderInterface = request.body
+
+    newOrder.orderNumber = await generateOrderNumber(account.branch)
+    
+    const createdOrder = await createOrderService(newOrder)
+
+
+
+    response.send(createdOrder)
 }
 
 
@@ -66,11 +72,13 @@ export const updateStatusOrderController = async (request: AuthRequest, response
         return;
     }
 
-    const { id , paymentMethod } = request.body
+    const { id , paymentMethod , orderNumber} = request.body
 
     await updateOrderStatus(id)
 
     await updatePaymentMethod(id, paymentMethod)
+
+    await removeOrderNumber(account.branch, orderNumber)
 
     const orders = await getOrdersByBranch(account.branch, "active");
 
@@ -136,7 +144,35 @@ export const getOrderHistoryController = async (request: AuthRequest, response: 
         return;
     }
 
-    const orders = await getTodayCompletedAndCanceledOrder(account.branch);
+    const formattedDate = new Date().toISOString().split('T')[0];
+    const date = formattedDate.toString()
+
+    const orders = await getTodayCompletedAndCanceledOrder(account.branch, date);
+
+    response.send(orders)
+
+}
+
+
+
+export const getOrderHistoryByDateController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const { date } = request.params
+
+    const orders = await getTodayCompletedAndCanceledOrder(account.branch, date);
 
     response.send(orders)
 
