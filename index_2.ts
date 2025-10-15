@@ -3,13 +3,13 @@ import mongoose from 'mongoose';
 import routes from "./routes/route"
 import cors from "cors"
 import dotenv from 'dotenv';
-import User from "./model/accounts.model"
+
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const mongodb_uri = process.env.MONGODB_URI_LIVE || "";
+const mongodb_uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/barracks';
   
 app.use(express.json());
 app.use(cors()); 
@@ -19,12 +19,6 @@ mongoose.connect(mongodb_uri)
 
 app.get('/', async (request: Request, response: Response) => {
   response.send("working server...........")
-});
-
-
-app.get('/test', async (request: Request, response: Response) => {
-  const users = await User.find()
-  response.send(users)
 });
 
 
