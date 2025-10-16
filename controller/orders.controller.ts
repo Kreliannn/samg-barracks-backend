@@ -39,7 +39,8 @@ export const createOrderController = async (request: AuthRequest, response: Resp
         await updateOrder(exisitingOrder._id.toString(), order.total, order.subTotal, order.vat, order.grandTotal, order.totalDiscount, order.serviceFee)
         await insertOrders(exisitingOrder._id.toString(), request.body.orders);
         const updatedOrder = await findOrderById(exisitingOrder._id.toString())
-        response.send(updatedOrder)
+        order.orderNumber = updatedOrder?.orderNumber ?? 0
+        response.send(order)
         return 
     }
 
@@ -52,7 +53,7 @@ export const createOrderController = async (request: AuthRequest, response: Resp
 
 
 
-    response.send(createdOrder)
+    response.send(newOrder)
 }
 
 
