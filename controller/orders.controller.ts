@@ -22,7 +22,7 @@ export const createOrderController = async (request: AuthRequest, response: Resp
         return;
     }
 
-    const orderId  = await checkIfTableExist(request.body.table, request.body.branch);
+    const exisitingOrder  = await checkIfTableExist(request.body.table, request.body.branch);
 
     const orders : OrderItem[] = request.body.orders;
 
@@ -34,11 +34,11 @@ export const createOrderController = async (request: AuthRequest, response: Resp
         })
     })
 
-    if(orderId){
+    if(exisitingOrder && exisitingOrder.table != "Take Away"){
         const order : getOrderInterface = request.body
-        await updateOrder(orderId, order.total, order.subTotal, order.vat, order.grandTotal, order.totalDiscount, order.serviceFee)
-        await insertOrders(orderId, request.body.orders);
-        const updatedOrder = await findOrderById(orderId)
+        await updateOrder(exisitingOrder._id.toString(), order.total, order.subTotal, order.vat, order.grandTotal, order.totalDiscount, order.serviceFee)
+        await insertOrders(exisitingOrder._id.toString(), request.body.orders);
+        const updatedOrder = await findOrderById(exisitingOrder._id.toString())
         response.send(updatedOrder)
         return 
     }

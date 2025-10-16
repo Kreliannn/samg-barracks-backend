@@ -58,6 +58,7 @@ export const updateTableController = async (request: AuthRequest, response: Resp
 
    if(!request.id)
     {
+        console.log("1")
         response.status(500).send("not authenticated")
         return
     }
@@ -66,14 +67,16 @@ export const updateTableController = async (request: AuthRequest, response: Resp
 
     if(!account)
     {
+        console.log("2")
         response.status(500).send("no account")
         return
     }
 
     const branch = await getBranchByBranch(account.branch)
 
-     if(!branch)
+    if(!branch)
     {
+        console.log("3")
         response.status(500).send("no branch found")
         return
     }

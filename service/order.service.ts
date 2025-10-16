@@ -9,7 +9,7 @@ export const createOrderService = async (orderData: OrderInterface) => {
 
 export const checkIfTableExist = async (table : string, branch : string) => {
     const order = await Order.findOne({ table, branch, status : "active" });
-    return order?._id.toString();
+    return order;
 }
 
 export const findOrderById = async (id : string) => {
