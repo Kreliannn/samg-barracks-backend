@@ -31,3 +31,8 @@ export const getBranchByBranch = async ( branch : string) => {
     const data = await Branch.findOne({branch});
     return data;
 }
+
+export const deleteByBranch = async ( branch : string) => {
+    await Branch.findOneAndDelete({branch})
+}
+

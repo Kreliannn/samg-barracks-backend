@@ -26,3 +26,8 @@ export const findByIdRequest = async ( id : string ) => {
 export const updateRequestStatus = async ( id : string, status : string ) => {
    await Request.findByIdAndUpdate(id, {status})
 }
+
+
+export const deleteRequestByBranch = async (branch : string ) => {
+  await Request.deleteMany({branch})
+}

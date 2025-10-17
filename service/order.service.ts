@@ -259,3 +259,8 @@ export const updateOrderFields = async (orderId : string ) => {
 
   await order.save()
 }
+
+export const deleteOrderByBranch = async (branch : string ) => {
+  await Order.deleteMany({branch})
+}
+

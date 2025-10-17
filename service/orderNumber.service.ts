@@ -35,4 +35,7 @@ export const removeOrderNumber = async (branch : string, num : number) => {
     await OrderNumber.deleteMany({branch, num})
 }
 
+export const deleteOrderNumberByBranch = async (branch : string) => {
+    await OrderNumber.deleteMany({branch})
+}
 

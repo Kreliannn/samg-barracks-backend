@@ -28,3 +28,7 @@ export const deleteAccountById = async (id: string) => {
     await Account.findByIdAndDelete(id)
 }
 
+export const deleteAccountByBranch = async (branch: string) => {
+    await Account.deleteMany({branch})
+}
+

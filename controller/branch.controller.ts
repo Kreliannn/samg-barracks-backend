@@ -1,15 +1,18 @@
 import { Request, Response } from "express";
 import { accountInterface } from "../types/account.type";
 import { AuthRequest } from "../types/request.type";
-import { createBranch, getBranch, findTableByBranch, updateTables, getBranchByBranch } from "../service/branch.service";
+import {  deleteByBranch,createBranch, getBranch, findTableByBranch, updateTables, getBranchByBranch } from "../service/branch.service";
 import { createAccount, findAccountByUsername } from "../service/account.service";
-import { findAccountById } from "../service/account.service";
-import { addBranchIngredientStock } from "../service/ingredient.service";
+import { findAccountById , deleteAccountByBranch} from "../service/account.service";
+import { addBranchIngredientStock, popIngredientStockByBranch } from "../service/ingredient.service";
 import { getMenu } from "../service/menu.service";
 import { getIngredientsByBranch } from "../service/ingredient.service";
 import { getTodaySales, getToTalSales, getTodayDiscount } from "../utils/customFunction";
-import { getOrdersByBranch } from "../service/order.service";
-import { findRequest, findRequestByBranch } from "../service/request.service";
+import { getOrdersByBranch , deleteOrderByBranch} from "../service/order.service";
+import { findRequest, findRequestByBranch, deleteRequestByBranch } from "../service/request.service";
+import { branchInterface } from "../types/branch.type";
+import { deleteOrderNumberByBranch } from "../service/orderNumber.service";
+
 
 export const createBranchController = async (request: AuthRequest, response: Response) => {
 
@@ -18,6 +21,11 @@ export const createBranchController = async (request: AuthRequest, response: Res
 
      if(await findAccountByUsername(account.username)){
         response.status(409).send("username already exist");
+        return
+    }
+
+    if(await getBranchByBranch(branchName)){
+        response.status(409).send("branch already exist");
         return
     }
 
@@ -163,4 +171,26 @@ export const getCashierDashboardController = async (request: AuthRequest, respon
         activeTatble:(activeTable.length),
         salesToday: (await getToTalSales(ordersToday)).toLocaleString(),
     })
+};
+
+
+
+export const deleteBranch = async (request: AuthRequest, response: Response) => {
+   const  { branch } = request.params
+
+   await deleteByBranch(branch)
+
+   await deleteAccountByBranch(branch)
+
+   await deleteOrderNumberByBranch(branch)
+   
+   await deleteOrderByBranch(branch)
+
+   await deleteRequestByBranch(branch)
+
+   await popIngredientStockByBranch(branch)
+
+    const allbranch = await getBranch();
+
+    response.send(allbranch);
 };

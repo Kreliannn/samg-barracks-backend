@@ -92,3 +92,12 @@ export const addBranchIngredientStock = async (branch: string) => {
     await ingredient.save(); 
   }
 };
+
+
+
+export const popIngredientStockByBranch = async (branch : string ) => {
+  await Ingredients.updateMany(
+      {},
+      { $pull: { stocks: { branch: branch } } }
+  );
+}
