@@ -1,12 +1,14 @@
 import { AuthRequest } from "../types/request.type";
 import { Request, Response } from "express";
-import { createIngredients , getIngredientsByBranch, updateIngredients, deductIngredientStocks, createIngredientBranchData} from "../service/ingredient.service";
+import {getIngredientsById, createIngredients , getIngredientsByBranch, updateIngredients, deductIngredientStocks, createIngredientBranchData} from "../service/ingredient.service";
 import fs from "fs";
 import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { get } from "http";
 import { branchStockInterface } from "../types/ingredients.type";
+import { createRefill, findRefillByDate } from "../service/refill.service";
+
 
 interface refillInterface {
     id : string,
@@ -122,6 +124,44 @@ export const deductIngredientController = async (request: AuthRequest, response:
     const refills : refillInterface[] = res
     refills.forEach( async (item) => {
         await deductIngredientStocks(item.id, item.qty, account?.branch)
+        const ing = await getIngredientsById(item.id)
+        if(ing){
+            await createRefill({
+                branch : account.branch,
+                date :  new Date().toISOString().split("T")[0],
+                ingredient : ing.name,
+                qty : item.qty
+            })
+        }
+       
     })
+
     response.send("success")
 }
+
+
+
+export const getRefillController = async (request: AuthRequest, response: Response) => {
+  if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("not found")
+        return
+    }
+
+    const { date } = request.params
+
+
+    const refills = await findRefillByDate(account.branch, date)
+
+    console.log(refills, date)
+
+    response.send(refills)
+};

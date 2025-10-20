@@ -12,6 +12,9 @@ import { getOrdersByBranch , deleteOrderByBranch} from "../service/order.service
 import { findRequest, findRequestByBranch, deleteRequestByBranch } from "../service/request.service";
 import { branchInterface } from "../types/branch.type";
 import { deleteOrderNumberByBranch } from "../service/orderNumber.service";
+import { createChange, updateChange, findChangeByDate } from "../service/change.service";
+import { changeInterface } from "../types/change.type";
+
 
 
 export const createBranchController = async (request: AuthRequest, response: Response) => {
@@ -194,3 +197,22 @@ export const deleteBranch = async (request: AuthRequest, response: Response) => 
 
     response.send(allbranch);
 };
+
+
+export const changeController = async (request: AuthRequest, response: Response) => {
+   const  change : changeInterface = request.body
+   const changeRecord = await findChangeByDate(change.date)
+
+   if(changeRecord){
+     await updateChange(changeRecord._id.toString(), change.change)
+   } else {
+     await createChange(change)
+   }
+
+   response.send("success")
+};
+
+
+
+
+

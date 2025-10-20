@@ -12,6 +12,12 @@ export const getIngredientsByBranch = async () => {
     return ingredients  
 }
 
+export const getIngredientsById = async (id : string) => {
+    const ingredient = await Ingredients.findById(id)
+    return ingredient
+}
+
+
 //update
 export const updateIngredients = async (id: string, name : string, stocks : number, price : number,branch : string) => {
     const ingredient = await Ingredients.findById(id)
