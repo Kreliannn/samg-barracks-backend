@@ -2,10 +2,9 @@ import OrderNumber from "../model/orderNumber.model";
 import { orderNumberInterface } from "../types/orderNumber.type";
 
 
-export const generateOrderNumber = async (branch : string) => {
+export const generateOrderNumber = async (branch : string, date : string) => {
     
-    const formattedDate = new Date().toISOString().split('T')[0];
-    const date = formattedDate.toString()
+   
 
     const orderNumbersData = await OrderNumber.find({ branch, date })
 

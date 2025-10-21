@@ -120,15 +120,18 @@ export const deductIngredientController = async (request: AuthRequest, response:
     }
 
 
-    const res = request.body
-    const refills : refillInterface[] = res
+    
+    const refills : refillInterface[] = request.body.refill
+    const date = request.body.date
+
+
     refills.forEach( async (item) => {
         await deductIngredientStocks(item.id, item.qty, account?.branch)
         const ing = await getIngredientsById(item.id)
         if(ing){
             await createRefill({
                 branch : account.branch,
-                date :  new Date().toISOString().split("T")[0],
+                date : date,
                 ingredient : ing.name,
                 qty : item.qty
             })

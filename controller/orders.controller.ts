@@ -47,9 +47,9 @@ export const createOrderController = async (request: AuthRequest, response: Resp
 
     const newOrder : OrderInterface = request.body
 
-    newOrder.orderNumber = await generateOrderNumber(account.branch)
+    newOrder.orderNumber = await generateOrderNumber(account.branch, newOrder.date)
     
-    const createdOrder = await createOrderService(newOrder)
+    await createOrderService(newOrder)
 
 
 
