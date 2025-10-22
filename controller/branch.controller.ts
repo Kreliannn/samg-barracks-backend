@@ -200,8 +200,23 @@ export const deleteBranch = async (request: AuthRequest, response: Response) => 
 
 
 export const changeController = async (request: AuthRequest, response: Response) => {
+
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
    const  change : changeInterface = request.body
-   const changeRecord = await findChangeByDate(change.date)
+   const changeRecord = await findChangeByDate(change.date, account.branch )
 
    if(changeRecord){
      await updateChange(changeRecord._id.toString(), change.change)
@@ -213,6 +228,30 @@ export const changeController = async (request: AuthRequest, response: Response)
 };
 
 
+export const getChangeController = async (request: AuthRequest, response: Response) => {
+   
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
 
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
+    const {date} = request.params
+
+
+    const res = await findChangeByDate(date, account.branch )
+
+    const  change = res ?  res.change : 0
+
+    response.send({ change })
+};
 
 

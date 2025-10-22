@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticateJWT } from "../middleware/auth.middleware";    
-import { deleteBranch,createBranchController , getBranchController, getTablesController, updateTableController, getManagerDashboardController, getCashierDashboardController} from "../controller/branch.controller";
+import { getChangeController ,changeController,deleteBranch,createBranchController , getBranchController, getTablesController, updateTableController, getManagerDashboardController, getCashierDashboardController} from "../controller/branch.controller";
 
 
 const route = Router()
@@ -12,5 +12,7 @@ route.get("/branch/manager", authenticateJWT, getManagerDashboardController)
 route.get("/branch/cashier", authenticateJWT, getCashierDashboardController)
 route.get("/branch/tables", authenticateJWT, getTablesController)
 route.put("/branch/tables", authenticateJWT, updateTableController)
+route.post("/branch/change", authenticateJWT, changeController)
+route.get("/branch/change/:date", authenticateJWT, getChangeController)
         
 export default route

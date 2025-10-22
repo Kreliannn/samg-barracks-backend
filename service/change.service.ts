@@ -5,8 +5,8 @@ export const createChange = async (change: changeInterface) => {
   return await Change.create(change)
 }
 
-export const findChangeByDate = async (date: string) => {
-  return await Change.findOne({date})
+export const findChangeByDate = async (date: string, branch : string) => {
+  return await Change.findOne({date, branch})
 }
 
 
