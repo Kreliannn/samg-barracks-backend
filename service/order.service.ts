@@ -31,7 +31,7 @@ export const getOrdersByBranch = async (branch: string, status : string) => {
 }
 
 export const getTodayOrdersByBranch = async (branch: string, status : string) => {
-  const formattedDate = new Date().toISOString().split('T')[0];
+  const formattedDate = new Date().toLocaleDateString('en-CA');
   const date = formattedDate.toString()
   const orders :   getOrderInterface[] = await Order.find({ branch , status, date});
   return orders;
@@ -184,7 +184,7 @@ export const popOrderItem = async (order_id : string, item_id : string) => {
 };
 
 
-export const applyDiscountToExisitngOrder = async (orderId : string ,ItemId : string) => {
+export const applyDiscountToExisitngOrder = async (orderId : string ,ItemId : string,  discount : number, type : string) => {
 
   const order = await findOrderById(orderId)
   if(!order) return
@@ -202,10 +202,9 @@ export const applyDiscountToExisitngOrder = async (orderId : string ,ItemId : st
 
           const itemPriceVat = item.price * 0.12
 
-          const itemWithoutVat = item.price - itemPriceVat
-  
-          const discountValue = itemWithoutVat * 0.20; 
-          const discountedPrice = itemWithoutVat - discountValue; 
+          let discountedPrice = item.price - discount; 
+
+          if(type == "pwd" || type == "senior") discountedPrice -= itemPriceVat
 
           const newItem : OrderItem = {
               item_id : generateId(),
@@ -216,11 +215,11 @@ export const applyDiscountToExisitngOrder = async (orderId : string ,ItemId : st
               branch: item.branch,
               img: item.img,
               type: item.type,
-              discount: discountValue,
-              discountType: "Discounted",
+              discount: discount,
+              discountType: type,
               qty: 1,
               total: discountedPrice,
-              vat : 0
+              vat : type == "pwd" || type == "senior" ? 0 : item.price * 0.12
           }
 
           order.orders.push(newItem) 

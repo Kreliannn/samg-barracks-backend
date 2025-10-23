@@ -1,3 +1,5 @@
+process.env.TZ = 'Asia/Manila';
+
 import express,{ Request, Response } from 'express';
 import mongoose from 'mongoose';
 import routes from "./routes/route"
@@ -9,7 +11,9 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const mongodb_uri = process.env.MONGODB_URI || "";
+const mongodb_uri = process.env.MONGODB_URI_LIVE || "";
+
+
 
 app.set('trust proxy', 1);
   
@@ -31,5 +35,6 @@ app.get('/test', async (request: Request, response: Response) => {
 
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port} `);
+  const date = new Date
+  console.log(`Server is running on http://localhost:${port} date: ${date}`);
 });

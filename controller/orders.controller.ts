@@ -104,6 +104,8 @@ export const getActiveOrderController = async (request: AuthRequest, response: R
 
     const orders = await getOrdersByBranch(account.branch, "active");
 
+    console.log(orders)
+
     response.send(orders)
 }
 
@@ -145,8 +147,10 @@ export const getOrderHistoryController = async (request: AuthRequest, response: 
         return;
     }
 
-    const formattedDate = new Date().toISOString().split('T')[0];
+    const formattedDate = new Date().toLocaleDateString('en-CA');
     const date = formattedDate.toString()
+
+    console.log(date)
 
     const orders = await getTodayCompletedAndCanceledOrder(account.branch, date);
 
@@ -295,9 +299,9 @@ export const cancelOrderontroller = async (request: AuthRequest, response: Respo
 
 export const applyDiscountToOrderontroller = async (request: AuthRequest, response: Response) => {
     
-    const { orderId, itemId } = request.body
+    const { orderId, itemId , discount, type } = request.body
 
-    await applyDiscountToExisitngOrder(orderId, itemId)
+    await applyDiscountToExisitngOrder(orderId, itemId, discount, type)
 
     await updateOrderFields(orderId)
  

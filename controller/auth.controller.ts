@@ -36,6 +36,7 @@ export const loginController = async (request: Request, response: Response) => {
 
     const { username, password} = request.body;
     
+    console.log("login")
 
     const user = await findAccountByUsername(username);
     
@@ -49,6 +50,7 @@ export const loginController = async (request: Request, response: Response) => {
         response.status(401).send("invalid credentials");
         return
     }  
+
 
     const token = jwt.sign({ id: user._id }, secret, { expiresIn: "1d" });
 

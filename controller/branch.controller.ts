@@ -14,6 +14,7 @@ import { branchInterface } from "../types/branch.type";
 import { deleteOrderNumberByBranch } from "../service/orderNumber.service";
 import { createChange, updateChange, findChangeByDate } from "../service/change.service";
 import { changeInterface } from "../types/change.type";
+import { getDate } from "../utils/customFunction";
 
 
 
@@ -126,19 +127,31 @@ export const getManagerDashboardController = async (request: AuthRequest, respon
         return
     }
 
+    const now = new Date();
+    const time = now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    });
+
+
     const orders = await getOrdersByBranch(account.branch, "completed")
     const orderRequest =  (account.branch == "Main Branch") ? await findRequest() : await findRequestByBranch(account.branch)
     const pendingRequest = orderRequest.filter((item) => item.status == "pending")
     const toShipRequest = orderRequest.filter((item) => item.status == "to ship")
+
     
+    const orderToday = orders.filter((order) => order.date == getDate(time))
+
+   
   
     response.send({ 
         totalIngredients: (await getIngredientsByBranch()).length,
         totalMenus: (await getMenu()).length,
-        salesToday: (await getToTalSales(orders)).toLocaleString(),
+        salesToday: (await getToTalSales(orderToday)).toLocaleString(),
         pendingRequests: pendingRequest.length,
         toShipRequests: toShipRequest.length,
-        discountToday : (await getTodayDiscount(orders))
+        discountToday : (await getTodayDiscount(orders, getDate(time) ))
     })
 };
 
@@ -160,15 +173,18 @@ export const getCashierDashboardController = async (request: AuthRequest, respon
         return
     }
 
-    const today = new Date();
-    const ymd = today.toISOString().split("T")[0]; 
+    const {date} = request.params
+
+    
   
 
     const orders = await getOrdersByBranch(account.branch, "completed")
 
     const activeTable =  await getOrdersByBranch(account.branch, "active")
 
-    const ordersToday = orders.filter((item) => item.date == ymd)
+    const ordersToday = orders.filter((item) => item.date == date)
+
+    console.log("cash",ordersToday.length)
 
     response.send({ 
         activeTatble:(activeTable.length),
