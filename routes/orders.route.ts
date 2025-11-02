@@ -17,7 +17,7 @@ route.put("/order/cancel/:id", authenticateJWT,  cancelOrderontroller )
 route.put("/order/move", authenticateJWT,  moveOrderontroller )
 route.put("/order/merge", authenticateJWT,  mergeOrderontroller )
 route.put("/order/split", authenticateJWT,  splitOrderontroller )
-route.get("/order/sales/:branch",  getBranchSalesController)
+route.get("/order/sales/:branch/:type",  getBranchSalesController)
 
 route.get("/order/editDate", async (request, response) => {
     await editDate()

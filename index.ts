@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const mongodb_uri = process.env.MONGODB_URI_LIVE || "";
+const mongodb_uri = process.env.MONGODB_URI || "";
 
 
 

@@ -4,7 +4,7 @@ import { findAccountById } from "../service/account.service";
 import {  updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus, findOrderById} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
-import { get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
+import { getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
 import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.service";
 
 export const createOrderController = async (request: AuthRequest, response: Response) => {
@@ -186,22 +186,49 @@ export const getOrderHistoryByDateController = async (request: AuthRequest, resp
 
 export const getBranchSalesController = async (request: AuthRequest, response: Response) => {
     
-    const { branch } = request.params
+    const { branch, type} = request.params
 
     const orders = await getOrdersByBranch(branch, "completed");
 
-    console.log(getTopCategory(orders))
+    let filteredOrders = orders
 
+
+    switch(type)
+    {
+        case "today":
+            filteredOrders = getTodayOrders(orders)
+            console.log("today")
+        break;
+
+        case "week":
+            filteredOrders = getThisWeekOrders(orders)
+            console.log("week")
+        break;
+
+        case "month":
+            filteredOrders = getThisMonthOrders(orders)
+            console.log("month")
+        break;
+    }
+    
     response.send({
+        totalSales :  getToTalSales(filteredOrders),// changeble
+        totalTax :  getToTalTax(filteredOrders), // changeble
+        totalTransaction :  filteredOrders.length, // changeble
+
+        topCategory :  getTopCategory(filteredOrders), // changeble
+        topMenu : getTopMenu(filteredOrders), // changeble
+
+        thisMonthSales : getThisMonthSales(orders),
+        thisWeekSales : getThisWeekSales(orders),
         todaySales : getTodaySales(orders),
-        totalSales :  getToTalSales(orders),
-        thisMonthSales :  getThisMonthSales(orders),
-        last30days : get30DaysSales(orders),
-        topCategory :  getTopCategory(orders),
-        topMenu : getTopMenu(orders),
+
         yearlySales : getYearlySales(orders)
     })
 }
+
+
+
 
 
 

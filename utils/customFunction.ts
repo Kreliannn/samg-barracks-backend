@@ -35,6 +35,173 @@ export const get30DaysSales = (orders : getOrderInterface[]) => {
 }
 
 
+export const getThisMonthSales = (orders: getOrderInterface[]) => {
+  interface dailySalesInterface {
+    date: string;
+    sales: number;
+  }
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const dailySales: dailySalesInterface[] = [];
+
+  // Create all days in local timezone
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    dailySales.push({ date, sales: 0 });
+  }
+
+  // Add actual sales
+  orders.forEach((item) => {
+    const match = dailySales.find((d) => d.date === item.date);
+    if (match) match.sales += item.grandTotal;
+  });
+
+  return dailySales;
+};
+
+
+export const getThisWeekSales = (orders: getOrderInterface[]) => {
+  interface dailySalesInterface {
+    date: string; // "Monday", "Tuesday", ...
+    sales: number;
+  }
+
+  const daysOfWeek = [
+    "Mon",
+    "Tues",
+    "Wed",
+    "Thurs",
+    "Fri",
+    "Sat",
+    "Sun",
+  ];
+
+  // Get current date
+  const now = new Date();
+
+  // Find Monday of this week
+  const firstDayOfWeek = new Date(now);
+  const dayOfWeek = now.getDay(); // Sunday = 0, Monday = 1, ...
+  const diffToMonday = (dayOfWeek + 6) % 7; // shift so Monday = start
+  firstDayOfWeek.setDate(now.getDate() - diffToMonday);
+
+  // Build all 7 days
+  const dailySales: dailySalesInterface[] = daysOfWeek.map((day, index) => {
+    const date = new Date(firstDayOfWeek);
+    date.setDate(firstDayOfWeek.getDate() + index);
+
+    return { date: day, sales: 0 };
+  });
+
+  // Add actual sales if the order falls within this week
+  orders.forEach((item) => {
+    const itemDate = new Date(item.date);
+    const start = new Date(firstDayOfWeek);
+    const end = new Date(firstDayOfWeek);
+    end.setDate(start.getDate() + 6);
+
+    if (itemDate >= start && itemDate <= end) {
+      const weekdayIndex = (itemDate.getDay() + 6) % 7; // convert so Monday=0
+      dailySales[weekdayIndex].sales += item.grandTotal;
+    }
+  });
+
+  return dailySales;
+};
+
+
+export const getTodaySales = (orders: getOrderInterface[]) => {
+
+ const today = new Date()
+ const todayStr = today.toISOString().split("T")[0]
+
+  // Filter only today's orders
+  const todayOrders = orders.filter((item) => item.date == todayStr)
+
+  // Return only existing transactions (no defaults)
+  return todayOrders.map((item) => ({
+    date: item.time, // already like "10:30 AM"
+    sales: item.grandTotal,
+  }))
+}
+
+
+export const getTodayOrders = (orders: getOrderInterface[]) => {
+
+  const today = new Date()
+  const todayStr = today.toISOString().split("T")[0]
+
+  
+  const todayOrders = orders.filter((item) => item.date == todayStr)
+
+ 
+  return todayOrders
+}
+
+
+export const getThisWeekOrders = (orders: getOrderInterface[]) => {
+  const today = new Date()
+
+  // Find Monday of this week
+  const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay() // treat Sunday as 7
+  const monday = new Date(today)
+  monday.setDate(today.getDate() - (dayOfWeek - 1))
+
+  // Find Sunday of this week
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const day = String(date.getDate()).padStart(2, "0")
+    return `${year}-${month}-${day}`
+  }
+
+  const start = formatDate(monday)
+  const end = formatDate(sunday)
+
+  // Filter orders within this week
+  const thisWeekOrders = orders.filter((item) => {
+    return item.date >= start && item.date <= end
+  })
+
+  return thisWeekOrders
+}
+
+
+
+export const getThisMonthOrders = (orders: getOrderInterface[]) => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = today.getMonth()
+
+  const startOfMonth = new Date(year, month, 1)
+  const endOfMonth = new Date(year, month + 1, 0)
+
+  const formatDate = (date: Date) => {
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, "0")
+    const d = String(date.getDate()).padStart(2, "0")
+    return `${y}-${m}-${d}`
+  }
+
+  const start = formatDate(startOfMonth)
+  const end = formatDate(endOfMonth)
+
+  // Filter orders that are within this month
+  const thisMonthOrders = orders.filter((item) => {
+    return item.date >= start && item.date <= end
+  })
+
+  return thisMonthOrders
+}
+
+
 export const getTopMenu = (orders : getOrderInterface[]) => {
  
     interface menuInterface {
@@ -150,8 +317,25 @@ export const getToTalSales = (orders : getOrderInterface[]) => {
     return totalSales
 }
 
+export const getToTalTax = (orders : getOrderInterface[]) => {
+ 
+    let totalTax = 0
 
-export const getThisMonthSales = (orders : getOrderInterface[]) => {
+    orders.forEach((item) => {
+        totalTax += item.vat
+    })
+
+    return totalTax
+}
+
+
+
+
+
+
+
+
+export const getmonth= (orders : getOrderInterface[]) => {
  
     let MonthtotalSales = 0
 
@@ -170,7 +354,7 @@ export const getThisMonthSales = (orders : getOrderInterface[]) => {
 
 
 
-export const getTodaySales = (orders : getOrderInterface[]) => {
+export const getToday = (orders : getOrderInterface[]) => {
  
     let todaySales = 0
 
