@@ -1,5 +1,5 @@
 import Menu from "../model/menu.model"
-import { menuInterface  , menuIngredientsInterface, menuVariantInterface,} from "../types/menu.type"
+import { menuInterface  , menuIngredientsInterface, menuVariantInterface, getMenuInterface,} from "../types/menu.type"
 
 export const createMenu = async (menuData: menuInterface) => {
     const menu = await Menu.create(menuData)
@@ -7,7 +7,7 @@ export const createMenu = async (menuData: menuInterface) => {
 }
 
 export const getMenu = async () => {
-    const menu = await Menu.find()
+    const menu : getMenuInterface[] = await Menu.find()
     return menu  
 }
 

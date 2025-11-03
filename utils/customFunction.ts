@@ -1,5 +1,6 @@
 import { getOrderInterface , OrderInterface, OrderItem} from "../types/orders"
 import { getMenuById } from "../service/menu.service"
+import { getMenuInterface } from "../types/menu.type"
 
 
 export const get30DaysSales = (orders : getOrderInterface[]) => {
@@ -200,6 +201,14 @@ export const getThisMonthOrders = (orders: getOrderInterface[]) => {
 
   return thisMonthOrders
 }
+
+export const getOrdersByDateRange = (orders: getOrderInterface[],start: string, end: string) => {
+  const filteredOrders = orders.filter((item) => {
+    return item.date >= start && item.date <= end;
+  });
+
+  return filteredOrders;
+};
 
 
 export const getTopMenu = (orders : getOrderInterface[]) => {
@@ -462,3 +471,36 @@ export function minus1Day(date: string) {
   d.setDate(d.getDate() - 1);
   return d.toLocaleDateString('en-CA');
 }
+
+
+
+
+export function getProductReportData(orders: getOrderInterface[], menu : getMenuInterface[]) {
+
+    const products = menu.map((product) => ({
+      name : product.name,
+      productId : product._id,
+      category : product.type,
+      sold : 0,
+      sales : 0,
+      discount : 0
+    }))
+
+    orders.forEach((order) => {
+      order.orders.forEach((item) => {
+        
+        products.forEach((product) => {
+          if(product.productId == item._id){
+            product.discount += item.discount
+            product.sold += item.qty
+            product.sales += ((item.price * item.qty) - item.discount)
+          }
+        })
+
+      })
+    })
+
+
+    return products
+}
+

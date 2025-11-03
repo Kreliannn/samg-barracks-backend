@@ -7,6 +7,7 @@ import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import { getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
 import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.service";
 
+
 export const createOrderController = async (request: AuthRequest, response: Response) => {
     if(!request.id)
     {
@@ -197,32 +198,26 @@ export const getBranchSalesController = async (request: AuthRequest, response: R
     {
         case "today":
             filteredOrders = getTodayOrders(orders)
-            console.log("today")
         break;
 
         case "week":
             filteredOrders = getThisWeekOrders(orders)
-            console.log("week")
         break;
 
         case "month":
             filteredOrders = getThisMonthOrders(orders)
-            console.log("month")
         break;
     }
     
     response.send({
-        totalSales :  getToTalSales(filteredOrders),// changeble
-        totalTax :  getToTalTax(filteredOrders), // changeble
-        totalTransaction :  filteredOrders.length, // changeble
-
-        topCategory :  getTopCategory(filteredOrders), // changeble
-        topMenu : getTopMenu(filteredOrders), // changeble
-
+        totalSales :  getToTalSales(filteredOrders),
+        totalTax :  getToTalTax(filteredOrders), 
+        totalTransaction :  filteredOrders.length, 
+        topCategory :  getTopCategory(filteredOrders), 
+        topMenu : getTopMenu(filteredOrders), 
         thisMonthSales : getThisMonthSales(orders),
         thisWeekSales : getThisWeekSales(orders),
         todaySales : getTodaySales(orders),
-
         yearlySales : getYearlySales(orders)
     })
 }
@@ -331,10 +326,10 @@ export const applyDiscountToOrderontroller = async (request: AuthRequest, respon
     await applyDiscountToExisitngOrder(orderId, itemId, discount, type)
 
     await updateOrderFields(orderId)
+    
  
    
     response.send("sucess")
 }
-
 
 

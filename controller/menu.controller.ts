@@ -7,6 +7,8 @@ import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
 import { createMenu, getMenu, updateMenu, addMenuVariant } from "../service/menu.service";
 import { menuVariantInterface } from "../types/menu.type";
+import { getOrdersByBranch } from "../service/order.service";
+import { getProductReportData, getTodayOrders,getThisMonthOrders, getThisWeekOrders, getOrdersByDateRange } from "../utils/customFunction";
 
 export const createMenuController = async (request: AuthRequest, response: Response) => {
     try {
@@ -110,4 +112,82 @@ export const addMenuVariantController = async (request: AuthRequest, response: R
     const menu = await getMenu();
     
     response.send(menu);
+}
+
+
+
+
+export const getProductReportController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const { type } = request.params
+
+    const menu = await getMenu(); 
+
+    const orders = await getOrdersByBranch(account.branch, "completed");
+
+    let filteredOrders = orders
+    
+    switch(type)
+    {
+        case "overAll":
+            filteredOrders = orders
+        break;
+
+        case "today":
+            filteredOrders = getTodayOrders(orders)
+        break;
+    
+        case "week":
+            filteredOrders = getThisWeekOrders(orders)
+        break;
+    
+        case "month":
+            filteredOrders = getThisMonthOrders(orders)
+        break;
+    }
+
+    const reportData = getProductReportData(filteredOrders, menu)
+
+    response.send(reportData)
+}
+
+export const getProductReportCustomDateController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const  customDate : { start : string, end : string}  = request.body.customDate
+
+    const menu = await getMenu(); 
+
+    const orders = await getOrdersByBranch(account.branch, "completed");
+
+    let filteredOrders = getOrdersByDateRange(orders, customDate.start, customDate.end)
+
+    const reportData = getProductReportData(filteredOrders, menu)
+
+    response.send(reportData)
 }
