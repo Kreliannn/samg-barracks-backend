@@ -8,7 +8,7 @@ import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
 import { createMenu, getMenu, updateMenu, addMenuVariant } from "../service/menu.service";
 import { menuVariantInterface } from "../types/menu.type";
 import { getOrdersByBranch } from "../service/order.service";
-import { getProductReportData, getTodayOrders,getThisMonthOrders, getThisWeekOrders, getOrdersByDateRange } from "../utils/customFunction";
+import { getProductCategoryReportData,getProductReportData, getTodayOrders,getThisMonthOrders, getThisWeekOrders, getOrdersByDateRange } from "../utils/customFunction";
 
 export const createMenuController = async (request: AuthRequest, response: Response) => {
     try {
@@ -132,7 +132,7 @@ export const getProductReportController = async (request: AuthRequest, response:
         return;
     }
 
-    const { type } = request.params
+    const { type , reportType } = request.params
 
     const menu = await getMenu(); 
 
@@ -159,7 +159,7 @@ export const getProductReportController = async (request: AuthRequest, response:
         break;
     }
 
-    const reportData = getProductReportData(filteredOrders, menu)
+    const reportData = (reportType == "product" ) ? getProductReportData(filteredOrders, menu) : getProductCategoryReportData(filteredOrders, menu)
 
     response.send(reportData)
 }
@@ -179,7 +179,8 @@ export const getProductReportCustomDateController = async (request: AuthRequest,
         return;
     }
 
-    const  customDate : { start : string, end : string}  = request.body.customDate
+    const customDate : { start : string, end : string}  = request.body.customDate
+    const reportType = request.body.reportType
 
     const menu = await getMenu(); 
 
@@ -187,7 +188,7 @@ export const getProductReportCustomDateController = async (request: AuthRequest,
 
     let filteredOrders = getOrdersByDateRange(orders, customDate.start, customDate.end)
 
-    const reportData = getProductReportData(filteredOrders, menu)
+    const reportData = (reportType == "product" ) ? getProductReportData(filteredOrders, menu) : getProductCategoryReportData(filteredOrders, menu)
 
     response.send(reportData)
 }

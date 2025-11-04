@@ -504,3 +504,41 @@ export function getProductReportData(orders: getOrderInterface[], menu : getMenu
     return products
 }
 
+
+
+export function getProductCategoryReportData(orders: getOrderInterface[], menu : getMenuInterface[]) {
+
+    const allCategory = [...new Set(menu.map(product => product.type))];
+
+    console.log(allCategory)
+
+    const getCategoryIndex = (category : string) => {
+      return allCategory.indexOf(category);
+    }
+
+    const categorys = allCategory.map((item) => ({
+      name : "test",
+      category : item,
+      sold : 0,
+      sales : 0,
+      discount : 0
+    }))
+
+
+    orders.forEach((order) => {
+      order.orders.forEach((item) => {
+        menu.forEach((product) => {
+          if(product._id == item._id){
+            const index = getCategoryIndex(product.type)
+            categorys[index].discount += item.discount
+            categorys[index].sold += item.qty
+            categorys[index].sales += ((item.price * item.qty) - item.discount)
+          }
+        })
+      })
+    })
+
+
+    return categorys
+}
+
