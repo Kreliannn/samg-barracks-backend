@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import routes from "./routes/route"
 import cors from "cors"
 import dotenv from 'dotenv';
-import User from "./model/accounts.model"
+import { reformatAccRole } from './service/account.service';
 
 dotenv.config();
 
@@ -29,8 +29,8 @@ app.get('/', async (request: Request, response: Response) => {
 
 
 app.get('/test', async (request: Request, response: Response) => {
-  const users = await User.find()
-  response.send(users)
+  await reformatAccRole()
+  response.send("123")
 });
 
 

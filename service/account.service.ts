@@ -32,3 +32,41 @@ export const deleteAccountByBranch = async (branch: string) => {
     await Account.deleteMany({branch})
 }
 
+export const reformatAccRole = async () => {
+    const accounts = await Account.find()
+    accounts.forEach(async(acc) => {
+        acc.role = {
+        isAdmin : true,
+        isCashier : false,
+        isManager : false,
+    },
+        await acc.save()
+    })
+ 
+}
+
+
+
+export const toggleAccountRole = async (id: string, role: string) => {
+    const account = await Account.findById(id);
+
+    if (!account) return;
+
+    if (!account.role) {
+        account.role = { isAdmin: false, isManager: false, isCashier: false };
+    }
+
+    switch (role) {
+        case "admin":
+        account.role.isAdmin = !account.role.isAdmin;
+        break;
+        case "manager":
+        account.role.isManager = !account.role.isManager;
+        break;
+        case "cashier":
+        account.role.isCashier = !account.role.isCashier;
+        break;
+    }
+
+    await account.save();
+};
