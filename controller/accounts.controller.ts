@@ -4,7 +4,7 @@ import {   toggleAccountRole,createAccount, findAccountById , getAccountByBranch
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import { AuthRequest } from "../types/request.type";
-
+import { createActivity } from "../service/activities.service";
 
 
 
@@ -45,9 +45,11 @@ export const deleteAccount = async (request: AuthRequest, response: Response) =>
 
     const { id } = request.params
 
-    await deleteAccountById(id)
+    const deletedAcc = await deleteAccountById(id)
     
     const branchAccounts = await getAccountByBranch(account.branch);
+    
+    await createActivity(account.fullname, account.branch, "admin", `deleted ${deletedAcc?.fullname} account`)
 
     response.send(branchAccounts);
 };
@@ -74,6 +76,10 @@ export const updateRoleController = async (request: AuthRequest, response: Respo
     await toggleAccountRole(id , role)
     
     const branchAccounts = await getAccountByBranch(account.branch);
+
+    const updatedUser = await findAccountById(id)
+
+    await createActivity(account.fullname, account.branch, "admin", `grant ${role} role to ${updatedUser?.fullname}`)
 
     response.send(branchAccounts);
 };

@@ -15,6 +15,7 @@ import { deleteOrderNumberByBranch } from "../service/orderNumber.service";
 import { createChange, updateChange, findChangeByDate } from "../service/change.service";
 import { changeInterface } from "../types/change.type";
 import { getDate } from "../utils/customFunction";
+import { createActivity , getActivity} from "../service/activities.service";
 
 
 
@@ -70,7 +71,6 @@ export const updateTableController = async (request: AuthRequest, response: Resp
 
    if(!request.id)
     {
-        console.log("1")
         response.status(500).send("not authenticated")
         return
     }
@@ -79,7 +79,6 @@ export const updateTableController = async (request: AuthRequest, response: Resp
 
     if(!account)
     {
-        console.log("2")
         response.status(500).send("no account")
         return
     }
@@ -88,7 +87,6 @@ export const updateTableController = async (request: AuthRequest, response: Resp
 
     if(!branch)
     {
-        console.log("3")
         response.status(500).send("no branch found")
         return
     }
@@ -98,6 +96,8 @@ export const updateTableController = async (request: AuthRequest, response: Resp
     const { tables } = request.body
     
     await updateTables(id, tables)
+
+    await createActivity(account.fullname, account.branch, "manager", `Edit Table Layout`)
 
     response.send("succes   ")
    
@@ -270,4 +270,26 @@ export const getChangeController = async (request: AuthRequest, response: Respon
     response.send({ change })
 };
 
+
+
+export const getBranchActivities = async (request: AuthRequest, response: Response) => {
+   
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
+    const activities = await getActivity(account.branch)
+
+    response.send(activities)
+};
 

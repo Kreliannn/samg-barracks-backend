@@ -5,10 +5,12 @@ import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
-import { createMenu, getMenu, updateMenu, addMenuVariant } from "../service/menu.service";
+import { createMenu, getMenu, updateMenu, addMenuVariant, getMenuById } from "../service/menu.service";
 import { menuVariantInterface } from "../types/menu.type";
 import { getOrdersByBranch } from "../service/order.service";
 import { getProductCategoryReportData,getProductReportData, getTodayOrders,getThisMonthOrders, getThisWeekOrders, getOrdersByDateRange } from "../utils/customFunction";
+import { createActivity } from "../service/activities.service";
+
 
 export const createMenuController = async (request: AuthRequest, response: Response) => {
     try {
@@ -51,6 +53,8 @@ export const createMenuController = async (request: AuthRequest, response: Respo
 
         const menu = await getMenu();
 
+        await createActivity(account.fullname, account.branch, "manager", `Added ${name} Menu`)
+
         response.send(menu);
     } catch (error) {
         console.error(error);
@@ -67,6 +71,15 @@ export const updateMenuController = async (request: AuthRequest, response: Respo
             return;
         }
 
+
+        const account = await findAccountById(request.id);
+
+        if(!account)
+        {
+            response.status(404).send("account not found");
+            return;
+        }
+
       
         const { id, name, index, ingredients, price } = request.body;
 
@@ -75,6 +88,8 @@ export const updateMenuController = async (request: AuthRequest, response: Respo
         await updateMenu(id, name, parsedIngredients, index, price);
         
         const menu = await getMenu();
+
+         await createActivity(account.fullname, account.branch, "manager", `Update ${(await getMenuById(id)).name} Menu Data`)
 
         response.send(menu);
     } catch (error) {
@@ -105,11 +120,22 @@ export const addMenuVariantController = async (request: AuthRequest, response: R
         return
     }
 
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+
     const { variants , id } = request.body
 
     await addMenuVariant(id, variants)
 
     const menu = await getMenu();
+
+    await createActivity(account.fullname, account.branch, "manager", `Add ${variants.variant} variants to ${(await getMenuById(id)).name}`)
     
     response.send(menu);
 }

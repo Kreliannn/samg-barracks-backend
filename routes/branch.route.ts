@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { authenticateJWT } from "../middleware/auth.middleware";    
-import { getChangeController ,changeController,deleteBranch,createBranchController , getBranchController, getTablesController, updateTableController, getManagerDashboardController, getCashierDashboardController} from "../controller/branch.controller";
+import {  getBranchActivities ,getChangeController ,changeController,deleteBranch,createBranchController , getBranchController, getTablesController, updateTableController, getManagerDashboardController, getCashierDashboardController} from "../controller/branch.controller";
 
 
 const route = Router()
 
 route.post("/branch", authenticateJWT, createBranchController)
 route.get("/branch", authenticateJWT, getBranchController)
+route.get("/branch/activities", authenticateJWT, getBranchActivities)
 route.delete("/branch/:branch", authenticateJWT, deleteBranch)
 route.get("/branch/manager", authenticateJWT, getManagerDashboardController)
 route.get("/branch/cashier/:date", authenticateJWT, getCashierDashboardController)

@@ -25,7 +25,7 @@ export const getAccountByBranch = async (branch: string) => {
 }
 
 export const deleteAccountById = async (id: string) => {
-    await Account.findByIdAndDelete(id)
+    return await Account.findByIdAndDelete(id)
 }
 
 export const deleteAccountByBranch = async (branch: string) => {

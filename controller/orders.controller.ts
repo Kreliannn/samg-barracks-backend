@@ -4,7 +4,7 @@ import { findAccountById } from "../service/account.service";
 import {  updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus, findOrderById} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
-import { getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
+import {  getOrdersByDateRange ,getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
 import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.service";
 
 
@@ -333,3 +333,76 @@ export const applyDiscountToOrderontroller = async (request: AuthRequest, respon
 }
 
 
+
+
+export const getTransactionReportController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const { type  } = request.params
+
+    const orders = await getOrdersByBranch(account.branch, "completed");
+
+    let filteredOrders = orders
+    
+    switch(type)
+    {
+        case "overAll":
+            filteredOrders = orders
+        break;
+
+        case "today":
+            filteredOrders = getTodayOrders(orders)
+        break;
+    
+        case "week":
+            filteredOrders = getThisWeekOrders(orders)
+        break;
+    
+        case "month":
+            filteredOrders = getThisMonthOrders(orders)
+        break;
+    }
+
+    response.send(filteredOrders)
+}
+
+export const getTransactionReportCustomDateController = async (request: AuthRequest, response: Response) => {
+
+    console.log("ping")
+
+    
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const customDate : { start : string, end : string}  = request.body.customDate
+
+
+    const orders = await getOrdersByBranch(account.branch, "completed");
+
+    let filteredOrders = getOrdersByDateRange(orders, customDate.start, customDate.end)
+
+    response.send(filteredOrders)
+}

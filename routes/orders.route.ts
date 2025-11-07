@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getOrderHistoryByDateController,applyDiscountToOrderontroller , getOrderHistoryController , cancelOrderontroller,splitOrderontroller ,mergeOrderontroller ,moveOrderontroller,refundOrderontroller,createOrderController, getActiveOrderController, getCompletedOrderController, updateStatusOrderController, getBranchSalesController} from "../controller/orders.controller";
+import {getTransactionReportController, getTransactionReportCustomDateController,  getOrderHistoryByDateController,applyDiscountToOrderontroller , getOrderHistoryController , cancelOrderontroller,splitOrderontroller ,mergeOrderontroller ,moveOrderontroller,refundOrderontroller,createOrderController, getActiveOrderController, getCompletedOrderController, updateStatusOrderController, getBranchSalesController} from "../controller/orders.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { editDate } from "../service/order.service";
 
@@ -17,7 +17,9 @@ route.put("/order/cancel/:id", authenticateJWT,  cancelOrderontroller )
 route.put("/order/move", authenticateJWT,  moveOrderontroller )
 route.put("/order/merge", authenticateJWT,  mergeOrderontroller )
 route.put("/order/split", authenticateJWT,  splitOrderontroller )
-route.get("/order/sales/:branch/:type",  getBranchSalesController)
+route.get("/order/sales/:branch/:type", authenticateJWT,  getBranchSalesController) 
+route.get("/order/report/:type", authenticateJWT, getTransactionReportController) 
+route.post("/order/report",  authenticateJWT, getTransactionReportCustomDateController) 
 
 route.get("/order/editDate", async (request, response) => {
     await editDate()

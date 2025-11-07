@@ -8,6 +8,7 @@ import { accountInterface } from "../types/account.type";
 import { get } from "http";
 import { branchStockInterface } from "../types/ingredients.type";
 import { createRefill, findRefillByDate } from "../service/refill.service";
+import { createActivity } from "../service/activities.service";
 
 
 interface refillInterface {
@@ -51,6 +52,8 @@ export const createIngredientsController = async (request: AuthRequest, response
 
         await createIngredients({ name, stocks, branch: account.branch, img: url, type , price});
 
+        await createActivity(account.fullname, account.branch, "manager", `Added ${name} ingridient`)
+
         const ingredients = await getIngredientsByBranch();
         
         response.send(ingredients);
@@ -85,6 +88,10 @@ export const EditIngredientsController = async (request: AuthRequest, response: 
         await updateIngredients(id, name, stocks, price ,account.branch)
 
         const ingredients = await getIngredientsByBranch();
+
+        const updatedIngredient = await getIngredientsById(id)
+
+        await createActivity(account.fullname, account.branch, "manager", `Edit ${updatedIngredient?.name} Ingridient data`)
         
         response.send(ingredients);
     } catch (error) {

@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import { AuthRequest } from "../types/request.type";
 
+
 dotenv.config();
 
 const secret = process.env.JWT_SECRET || "defaultsecret";
