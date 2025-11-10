@@ -6,6 +6,7 @@ import menuRoutes from "./menu.route";
 import accountRoutes from "./account.route";
 import orderRoutes from "./orders.route";   
 import requestRoutes from "./request.route"
+import wasteRoutes from "./waste.route"
 
 const routes = Router()
 
@@ -16,5 +17,6 @@ routes.use(ingredientsRoutes)
 routes.use(menuRoutes)
 routes.use(orderRoutes)
 routes.use(requestRoutes)
+routes.use(wasteRoutes)
 
 export default routes
