@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getTransactionReportController, getTransactionReportCustomDateController,  getOrderHistoryByDateController,applyDiscountToOrderontroller , getOrderHistoryController , cancelOrderontroller,splitOrderontroller ,mergeOrderontroller ,moveOrderontroller,refundOrderontroller,createOrderController, getActiveOrderController, getCompletedOrderController, updateStatusOrderController, getBranchSalesController} from "../controller/orders.controller";
+import {  startTimerController,getTransactionReportController, getTransactionReportCustomDateController,  getOrderHistoryByDateController,applyDiscountToOrderontroller , getOrderHistoryController , cancelOrderontroller,splitOrderontroller ,mergeOrderontroller ,moveOrderontroller,refundOrderontroller,createOrderController, getActiveOrderController, getCompletedOrderController, updateStatusOrderController, getBranchSalesController} from "../controller/orders.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { editDate } from "../service/order.service";
 
@@ -20,6 +20,7 @@ route.put("/order/split", authenticateJWT,  splitOrderontroller )
 route.get("/order/sales/:branch/:type", authenticateJWT,  getBranchSalesController) 
 route.get("/order/report/:type", authenticateJWT, getTransactionReportController) 
 route.post("/order/report",  authenticateJWT, getTransactionReportCustomDateController) 
+route.put("/order/startTimer",  authenticateJWT, startTimerController) 
 
 route.get("/order/editDate", async (request, response) => {
     await editDate()

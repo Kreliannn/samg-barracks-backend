@@ -263,3 +263,7 @@ export const deleteOrderByBranch = async (branch : string ) => {
   await Order.deleteMany({branch})
 }
 
+export const startTimer = async (id : string, time : string) => {
+  await Order.findByIdAndUpdate(id, { unliTimer : time })
+}
+

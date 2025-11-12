@@ -17,4 +17,10 @@ export const updateChange = async (id : string, newChange : number) => {
   await change.save()
 }
 
+export const updateShiftEnd = async (id : string, end : string) => {
+  const change = await Change.findById(id)
+  if(!change) return
+  change.end = end
+  await change.save()
+}
 

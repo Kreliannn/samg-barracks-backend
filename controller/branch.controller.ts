@@ -12,7 +12,7 @@ import { getOrdersByBranch , deleteOrderByBranch} from "../service/order.service
 import { findRequest, findRequestByBranch, deleteRequestByBranch } from "../service/request.service";
 import { branchInterface } from "../types/branch.type";
 import { deleteOrderNumberByBranch } from "../service/orderNumber.service";
-import { createChange, updateChange, findChangeByDate } from "../service/change.service";
+import { createChange, updateChange, findChangeByDate, updateShiftEnd } from "../service/change.service";
 import { changeInterface } from "../types/change.type";
 import { getDate } from "../utils/customFunction";
 import { createActivity , getActivity} from "../service/activities.service";
@@ -236,9 +236,13 @@ export const changeController = async (request: AuthRequest, response: Response)
 
    if(changeRecord){
      await updateChange(changeRecord._id.toString(), change.change)
+     await createActivity(account.fullname, account.branch, "cashier", `update change to ₱${change.change} in ${change.date}`)
    } else {
      await createChange(change)
+     await createActivity(account.fullname, account.branch, "cashier", `start shift and set change to ₱${change.change} in ${change.date}`)
    }
+
+   
 
    response.send("success")
 };
@@ -265,9 +269,41 @@ export const getChangeController = async (request: AuthRequest, response: Respon
 
     const res = await findChangeByDate(date, account.branch )
 
-    const  change = res ?  res.change : 0
+    if(!res)
+    {
+        response.status(500).send("no change")
+        return
+    }   
 
-    response.send({ change })
+    console.log("123")
+
+    response.send(res)
+};
+
+
+
+export const endShiftController = async (request: AuthRequest, response: Response) => {
+   
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
+    const  { id, end } = request.body
+    
+    await updateShiftEnd(id, end)
+    await createActivity(account.fullname, account.branch, "cashier", `end shift ${end}`)
+   
+    response.send("success")
 };
 
 

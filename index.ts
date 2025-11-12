@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import routes from "./routes/route"
 import cors from "cors"
 import dotenv from 'dotenv';
-import { reformatAccRole } from './service/account.service';
+
 
 dotenv.config();
 
@@ -29,8 +29,8 @@ app.get('/', async (request: Request, response: Response) => {
 
 
 app.get('/test', async (request: Request, response: Response) => {
-  await reformatAccRole()
-  response.send("123")
+
+  response.send("done")
 });
 
 

@@ -1,10 +1,10 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import {  updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus, findOrderById} from "../service/order.service";
+import { startTimer, updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus, findOrderById} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
-import {  getOrdersByDateRange ,getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
+import {   getOrdersByDateRange ,getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
 import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.service";
 
 
@@ -405,4 +405,14 @@ export const getTransactionReportCustomDateController = async (request: AuthRequ
     let filteredOrders = getOrdersByDateRange(orders, customDate.start, customDate.end)
 
     response.send(filteredOrders)
+}
+
+
+export const startTimerController = async (request: AuthRequest, response: Response) => {
+
+    const {id, time} = request.body
+
+    await startTimer(id, time)
+    
+    response.send("success")
 }

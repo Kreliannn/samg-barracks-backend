@@ -36,6 +36,7 @@ const orderSchema = new Schema({
     serviceFee : { type: Number, required: true },
     paymentMethod : { type: String, required: true },
     orderNumber : { type: Number, required: true },
+    unliTimer : { type: String, required: true },
 });
 
 

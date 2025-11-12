@@ -37,7 +37,8 @@ export interface OrderInterface {
   status : string,
   serviceFee : number,
   paymentMethod : string,
-  orderNumber : number
+  orderNumber : number,
+  unliTimer : string,
 }
 
 
@@ -58,5 +59,6 @@ export interface getOrderInterface {
   status : string,
   serviceFee : number,
   paymentMethod : string,
-  orderNumber : number
+  orderNumber : number,
+  unliTimer : string,
 }
