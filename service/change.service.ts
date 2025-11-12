@@ -9,6 +9,9 @@ export const findChangeByDate = async (date: string, branch : string) => {
   return await Change.findOne({date, branch})
 }
 
+export const findChangebyBranch = async (branch: string) => {
+  return await Change.find({ branch }) 
+};
 
 export const updateChange = async (id : string, newChange : number) => {
   const change = await Change.findById(id)

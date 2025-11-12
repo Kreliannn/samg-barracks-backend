@@ -7,15 +7,16 @@ import { findAccountById , deleteAccountByBranch} from "../service/account.servi
 import { addBranchIngredientStock, popIngredientStockByBranch } from "../service/ingredient.service";
 import { getMenu } from "../service/menu.service";
 import { getIngredientsByBranch } from "../service/ingredient.service";
-import { getTodaySales, getToTalSales, getTodayDiscount } from "../utils/customFunction";
+import { getTodaySales, getToTalSales, getTodayDiscount, processShiftData } from "../utils/customFunction";
 import { getOrdersByBranch , deleteOrderByBranch} from "../service/order.service";
 import { findRequest, findRequestByBranch, deleteRequestByBranch } from "../service/request.service";
 import { branchInterface } from "../types/branch.type";
 import { deleteOrderNumberByBranch } from "../service/orderNumber.service";
-import { createChange, updateChange, findChangeByDate, updateShiftEnd } from "../service/change.service";
-import { changeInterface } from "../types/change.type";
+import { createChange, updateChange, findChangeByDate, updateShiftEnd, findChangebyBranch } from "../service/change.service";
+import { changeInterface, shiftInterface } from "../types/change.type";
 import { getDate } from "../utils/customFunction";
 import { createActivity , getActivity} from "../service/activities.service";
+import { getCompletedOrderController } from "./orders.controller";
 
 
 
@@ -328,4 +329,31 @@ export const getBranchActivities = async (request: AuthRequest, response: Respon
 
     response.send(activities)
 };
+
+
+export const getBranchShift = async (request: AuthRequest, response: Response) => {
+   
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(500).send("no account")
+        return
+    }
+
+    const shifts = await findChangebyBranch(account.branch)
+
+    const orders = await getOrdersByBranch(account.branch, "completed")
+
+    const processedShift = processShiftData(shifts, orders)
+    
+    response.send(processedShift)
+};
+
 

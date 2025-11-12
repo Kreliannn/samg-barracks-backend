@@ -1,6 +1,7 @@
 import { getOrderInterface , OrderInterface, OrderItem} from "../types/orders"
 import { getMenuById } from "../service/menu.service"
 import { getMenuInterface } from "../types/menu.type"
+import { changeInterface, shiftInterface } from "../types/change.type"
 
 
 export const get30DaysSales = (orders : getOrderInterface[]) => {
@@ -542,3 +543,35 @@ export function getProductCategoryReportData(orders: getOrderInterface[], menu :
     return categorys
 }
 
+export const processShiftData = (shifts : changeInterface[], orders : getOrderInterface[]) => {
+
+   const processedShift : shiftInterface[] = []
+
+   shifts.forEach((shift) => {
+        const newShift : shiftInterface = {
+            date : shift.date,
+            start : shift.start, 
+            end : shift.end,
+            change : shift.change,
+            sales : 0,
+            discount : 0,
+            vat : 0,
+            transaction : 0,
+            serviceFee : 0
+        }
+
+        orders.forEach((order) => {
+            if(order.date == newShift.date){
+                newShift.sales += order.grandTotal
+                newShift.discount += order.totalDiscount
+                newShift.vat += order.vat
+                newShift.serviceFee += order.serviceFee,
+                newShift.transaction += 1
+            }
+        })
+
+        processedShift.unshift(newShift)
+    })
+
+    return processedShift
+}
