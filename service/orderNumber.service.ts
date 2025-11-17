@@ -4,8 +4,6 @@ import { orderNumberInterface } from "../types/orderNumber.type";
 
 export const generateOrderNumber = async (branch : string, date : string) => {
     
-   
-
     const orderNumbersData = await OrderNumber.find({ branch, date })
 
     if(!orderNumbersData) return 1

@@ -1,7 +1,7 @@
 import { AuthRequest } from "../types/request.type";
 import { Response } from "express";
 import { findAccountById } from "../service/account.service";
-import { startTimer, updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus, findOrderById} from "../service/order.service";
+import {updateOrderStatusToPending, startTimer, updateOrderFields , applyDiscountToExisitngOrder,getTodayCompletedAndCanceledOrder ,toggleOrderStatus,popOrderItem ,mergeOrders ,updateOrderTable  ,getTodayOrdersByBranch ,updatePaymentMethod, updateOrderGrandTotal,popOrderItemAndGetTotal,getOrdersByBranch, createOrderService, checkIfTableExist , insertOrders, updateOrder, updateOrderStatus, findOrderById} from "../service/order.service";
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import {   getOrdersByDateRange ,getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
@@ -77,7 +77,7 @@ export const updateStatusOrderController = async (request: AuthRequest, response
     const { id , paymentMethod , orderNumber} = request.body
 
     await updateOrderStatus(id)
-
+   
     await updatePaymentMethod(id, paymentMethod)
 
     await removeOrderNumber(account.branch, orderNumber)
@@ -86,6 +86,62 @@ export const updateStatusOrderController = async (request: AuthRequest, response
 
    response.send(orders)
 }
+
+// temporary delete later
+export const TEMPORARYupdateStatusOrderController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const { id , paymentMethod , orderNumber} = request.body
+
+   
+    await updateOrderStatusToPending(id) 
+
+    await updatePaymentMethod(id, paymentMethod)
+
+    const orders = await getOrdersByBranch(account.branch, "active");
+
+   response.send(orders)
+}
+
+// temporary delete later
+export const TEMPORARYCompleteStatusOrderController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const { id, orderNumber} = request.body
+
+    await updateOrderStatus(id)
+
+    await removeOrderNumber(account.branch, orderNumber)
+
+    const orders = await getOrdersByBranch(account.branch, "pending");
+
+   response.send(orders)
+}
+
 
 
 export const getActiveOrderController = async (request: AuthRequest, response: Response) => {
@@ -109,6 +165,30 @@ export const getActiveOrderController = async (request: AuthRequest, response: R
 
     response.send(orders)
 }
+
+
+export const getPendingeOrderController = async (request: AuthRequest, response: Response) => {
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+    const orders = await getOrdersByBranch(account.branch, "pending");
+
+    console.log(orders)
+
+    response.send(orders)
+}
+
 
 
 export const getCompletedOrderController = async (request: AuthRequest, response: Response) => {

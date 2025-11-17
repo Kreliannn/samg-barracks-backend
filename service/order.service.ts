@@ -67,6 +67,10 @@ export const updateOrderStatus = async ( id:string ) => {
     await Order.findByIdAndUpdate(id, { status : "completed" })
 }
 
+export const updateOrderStatusToPending = async ( id:string ) => {
+    await Order.findByIdAndUpdate(id, { status : "pending" })
+}
+
 export const toggleOrderStatus= async ( id:string ) => {
     const order = await Order.findById(id)
     if(order?.status == "completed"){
