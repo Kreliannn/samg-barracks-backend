@@ -17,6 +17,10 @@ export const getIngredientsById = async (id : string) => {
     return ingredient
 }
 
+export const deleteIngredientsById = async (id : string) => {
+    await Ingredients.findByIdAndDelete(id)
+}
+
 
 //update
 export const updateIngredients = async (id: string, name : string, stocks : number, price : number,branch : string) => {

@@ -1,6 +1,6 @@
 import { AuthRequest } from "../types/request.type";
 import { Request, Response } from "express";
-import {getIngredientsById, createIngredients , getIngredientsByBranch, updateIngredients, deductIngredientStocks, createIngredientBranchData} from "../service/ingredient.service";
+import {  deleteIngredientsById,getIngredientsById, createIngredients , getIngredientsByBranch, updateIngredients, deductIngredientStocks, createIngredientBranchData} from "../service/ingredient.service";
 import fs from "fs";
 import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
@@ -9,7 +9,7 @@ import { get } from "http";
 import { branchStockInterface } from "../types/ingredients.type";
 import { createRefill, findRefillByDate } from "../service/refill.service";
 import { createActivity } from "../service/activities.service";
-
+import { popMenuIngredient } from "../service/menu.service";
 
 interface refillInterface {
     id : string,
@@ -108,6 +108,13 @@ export const getIngredientsController = async (request: AuthRequest, response: R
     response.send(ingredients);
 }
 
+export const deletetIngredientsController = async (request: AuthRequest, response: Response) => {
+    const id = request.params.id
+    await deleteIngredientsById(id)
+    await popMenuIngredient(id)
+    const ingredients = await getIngredientsByBranch();
+    response.send(ingredients);
+}
 
 
 

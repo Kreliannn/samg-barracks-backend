@@ -5,7 +5,7 @@ import cloudinary from "../utils/cloudinary"
 import { findAccountById } from "../service/account.service";
 import { accountInterface } from "../types/account.type";
 import { menuIngredientsInterface, menuInterface } from "../types/menu.type";
-import { createMenu, getMenu, updateMenu, addMenuVariant, getMenuById } from "../service/menu.service";
+import { createMenu, getMenu, updateMenu, addMenuVariant, getMenuById , deleteMenuById} from "../service/menu.service";
 import { menuVariantInterface } from "../types/menu.type";
 import { getOrdersByBranch } from "../service/order.service";
 import { getProductCategoryReportData,getProductReportData, getTodayOrders,getThisMonthOrders, getThisWeekOrders, getOrdersByDateRange } from "../utils/customFunction";
@@ -111,6 +111,15 @@ export const getMenusController = async (request: AuthRequest, response: Respons
     const menu = await getMenu();
     response.send(menu);
 }
+
+
+export const deletetMenuController = async (request: AuthRequest, response: Response) => {
+    const id = request.params.id
+    await deleteMenuById(id)
+    const menu = await getMenu();
+    response.send(menu);
+}
+
 
 
 export const addMenuVariantController = async (request: AuthRequest, response: Response) => {

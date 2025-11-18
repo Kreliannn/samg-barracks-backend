@@ -16,6 +16,19 @@ export const getMenuById = async (id : string) => {
     return menu  
 }
 
+export const deleteMenuById = async (id : string) => {
+    await Menu.findByIdAndDelete(id)
+}
+
+export const popMenuIngredient = async (id: string) => {
+  await Menu.updateMany(
+    { "variants.ingredients.id": id }, // find menus containing this ingredient
+    { $pull: { "variants.$[].ingredients": { id } } } // remove ingredient from all variants
+  );
+};
+
+
+
 export const updateMenu = async (id: string, name: string, ingredients: menuIngredientsInterface[], index: number, price: number) => {
     const menu = await Menu.findById(id) 
     if(!menu ) return 
