@@ -7,55 +7,53 @@ import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import {   getOrdersByDateRange ,getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
 import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.service";
 
-
 export const createOrderController = async (request: AuthRequest, response: Response) => {
-    if(!request.id)
-    {
-        response.status(500).send("not authenticated")
-        return
+    if (!request.id) {
+        return response.status(500).send("not authenticated");
     }
 
     const account = await findAccountById(request.id);
+    if (!account) return response.status(404).send("account not found");
 
-    if(!account)
-    {
-        response.status(404).send("account not found");
-        return;
+    const existingOrder = await checkIfTableExist(request.body.table, request.body.branch);
+    const orders: OrderItem[] = request.body.orders;
+
+    // FIXED: sequential async loops
+    for (const order of orders) {
+        const orderQuantity = order.qty;
+        for (const ingredient of order.ingredients) {
+            await deductIngredientStocks(
+                ingredient.id,
+                orderQuantity * ingredient.qty,
+                account.branch
+            );
+        }
     }
 
-    const exisitingOrder  = await checkIfTableExist(request.body.table, request.body.branch);
-
-    const orders : OrderItem[] = request.body.orders;
-
-
-    orders.forEach(async (order) => {
-        const orderQuantity = order.qty
-        order.ingredients.forEach(async (ingredient) => {
-            await deductIngredientStocks(ingredient.id, (orderQuantity * ingredient.qty), account.branch);
-        })
-    })
-
-    if(exisitingOrder && exisitingOrder.table != "Take Away"){
-        const order : getOrderInterface = request.body
-        await updateOrder(exisitingOrder._id.toString(), order.total, order.subTotal, order.vat, order.grandTotal, order.totalDiscount, order.serviceFee)
-        await insertOrders(exisitingOrder._id.toString(), request.body.orders);
-        const updatedOrder = await findOrderById(exisitingOrder._id.toString())
-        order.orderNumber = updatedOrder?.orderNumber ?? 0
-        response.send(order)
-        return 
+    if (existingOrder && existingOrder.table != "Take Away") {
+        const order: getOrderInterface = request.body;
+        await updateOrder(
+            existingOrder._id.toString(),
+            order.total,
+            order.subTotal,
+            order.vat,
+            order.grandTotal,
+            order.totalDiscount,
+            order.serviceFee
+        );
+        await insertOrders(existingOrder._id.toString(), request.body.orders);
+        const updatedOrder = await findOrderById(existingOrder._id.toString());
+        order.orderNumber = updatedOrder?.orderNumber ?? 0;
+        return response.send(order);
     }
 
+    const newOrder: OrderInterface = request.body;
+    newOrder.orderNumber = await generateOrderNumber(account.branch, newOrder.date);
+    await createOrderService(newOrder);
 
-    const newOrder : OrderInterface = request.body
+    response.send(newOrder);
+};
 
-    newOrder.orderNumber = await generateOrderNumber(account.branch, newOrder.date)
-    
-    await createOrderService(newOrder)
-
-
-
-    response.send(newOrder)
-}
 
 
 
