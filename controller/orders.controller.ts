@@ -9,11 +9,15 @@ import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.s
 
 export const createOrderController = async (request: AuthRequest, response: Response) => {
     if (!request.id) {
-        return response.status(500).send("not authenticated");
+         response.status(500).send("not authenticated");
+         return
     }
 
     const account = await findAccountById(request.id);
-    if (!account) return response.status(404).send("account not found");
+    if (!account){
+        response.status(404).send("account not found");
+        return
+    }  
 
     const existingOrder = await checkIfTableExist(request.body.table, request.body.branch);
     const orders: OrderItem[] = request.body.orders;
@@ -44,7 +48,8 @@ export const createOrderController = async (request: AuthRequest, response: Resp
         await insertOrders(existingOrder._id.toString(), request.body.orders);
         const updatedOrder = await findOrderById(existingOrder._id.toString());
         order.orderNumber = updatedOrder?.orderNumber ?? 0;
-        return response.send(order);
+         response.send(order);
+         return
     }
 
     const newOrder: OrderInterface = request.body;
