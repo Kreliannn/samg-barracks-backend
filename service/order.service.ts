@@ -52,12 +52,10 @@ export const updateOrder = async (id: string, total : number, subTotal : number,
         orders.grandTotal += grandTotal
         orders.totalDiscount += totalDiscount; 
         orders.serviceFee += serviceFee
-        console.log(orders)
         await orders.save()
     }
     else
     {
-        console.log(orders)
         console.log("errorr")
     }
 }

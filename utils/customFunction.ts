@@ -511,7 +511,6 @@ export function getProductCategoryReportData(orders: getOrderInterface[], menu :
 
     const allCategory = [...new Set(menu.map(product => product.type))];
 
-    console.log(allCategory)
 
     const getCategoryIndex = (category : string) => {
       return allCategory.indexOf(category);

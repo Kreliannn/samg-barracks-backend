@@ -164,8 +164,6 @@ export const getActiveOrderController = async (request: AuthRequest, response: R
 
     const orders = await getOrdersByBranch(account.branch, "active");
 
-    console.log(orders)
-
     response.send(orders)
 }
 
@@ -187,7 +185,6 @@ export const getPendingeOrderController = async (request: AuthRequest, response:
 
     const orders = await getOrdersByBranch(account.branch, "pending");
 
-    console.log(orders)
 
     response.send(orders)
 }

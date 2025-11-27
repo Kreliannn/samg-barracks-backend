@@ -178,7 +178,6 @@ export const getRefillController = async (request: AuthRequest, response: Respon
 
     const refills = await findRefillByDate(account.branch, date)
 
-    console.log(refills, date)
 
     response.send(refills)
 };
