@@ -30,7 +30,7 @@ export const generateOrderNumber = async (branch : string, date : string) => {
 
 export const generatedNumberV2  = async (branch : string, date : string) => {
     
-    const orderNumbersData = await OrderNumber.findOne({ branch }).sort({ createdAt: -1 });
+    const orderNumbersData = await OrderNumber.findOne({ branch }).sort({ num: -1 });
 
     const generatedNumber =  (orderNumbersData) ? orderNumbersData.num! + 1 : 1
 
