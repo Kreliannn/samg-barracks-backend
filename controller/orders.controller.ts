@@ -5,7 +5,7 @@ import {updateOrderStatusToPending, startTimer, updateOrderFields , applyDiscoun
 import { deductIngredientStocks } from "../service/ingredient.service";
 import { OrderInterface , OrderItem, getOrderInterface} from "../types/orders";
 import {   getOrdersByDateRange ,getThisMonthOrders, getThisWeekOrders,getTodayOrders, getThisWeekSales, getToTalTax,get30DaysSales, getYearlySales, getTopMenu , getTopCategory, getThisMonthSales, getToTalSales, getTodaySales} from "../utils/customFunction";
-import { generateOrderNumber, removeOrderNumber } from "../service/orderNumber.service";
+import { generatedNumberV2  } from "../service/orderNumber.service";
 
 export const createOrderController = async (request: AuthRequest, response: Response) => {
     if (!request.id) {
@@ -53,7 +53,7 @@ export const createOrderController = async (request: AuthRequest, response: Resp
     }
 
     const newOrder: OrderInterface = request.body;
-    newOrder.orderNumber = await generateOrderNumber(account.branch, newOrder.date);
+    newOrder.orderNumber = await generatedNumberV2(account.branch, newOrder.date);
     await createOrderService(newOrder);
 
     response.send(newOrder);
@@ -83,7 +83,6 @@ export const updateStatusOrderController = async (request: AuthRequest, response
    
     await updatePaymentMethod(id, paymentMethod)
 
-    await removeOrderNumber(account.branch, orderNumber)
 
     const orders = await getOrdersByBranch(account.branch, "active");
 
@@ -137,8 +136,6 @@ export const TEMPORARYCompleteStatusOrderController = async (request: AuthReques
     const { id, orderNumber} = request.body
 
     await updateOrderStatus(id)
-
-    await removeOrderNumber(account.branch, orderNumber)
 
     const orders = await getOrdersByBranch(account.branch, "pending");
 
@@ -367,16 +364,33 @@ export const mergeOrderontroller = async (request: AuthRequest, response: Respon
 
 
 export const splitOrderontroller = async (request: AuthRequest, response: Response) => {
+
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
     
    const id : string = request.body.id
    const ids : string[] = request.body.item_ids
    const branch = request.body.branch
-   const order = request.body.order
+   const order : OrderInterface = request.body.order
 
    
     for (const item of ids) {
         await popOrderItem(id, item);
     }
+
+    order.orderNumber = await generatedNumberV2(account.branch, order.date )
 
     await createOrderService(order)
 

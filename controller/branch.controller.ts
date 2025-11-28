@@ -17,6 +17,7 @@ import { changeInterface, shiftInterface } from "../types/change.type";
 import { getDate } from "../utils/customFunction";
 import { createActivity , getActivity} from "../service/activities.service";
 import { getCompletedOrderController } from "./orders.controller";
+import { removeOrderNumberV2 } from "../service/orderNumber.service";
 
 
 
@@ -303,6 +304,8 @@ export const endShiftController = async (request: AuthRequest, response: Respons
     
     await updateShiftEnd(id, end)
     await createActivity(account.fullname, account.branch, "cashier", `end shift ${end}`)
+
+    await removeOrderNumberV2(account.branch)
    
     response.send("success")
 };
