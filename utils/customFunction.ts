@@ -68,53 +68,48 @@ export const getThisMonthSales = (orders: getOrderInterface[]) => {
 
 export const getThisWeekSales = (orders: getOrderInterface[]) => {
   interface dailySalesInterface {
-    date: string; // "Monday", "Tuesday", ...
+    date: string;
     sales: number;
   }
 
-  const daysOfWeek = [
-    "Mon",
-    "Tues",
-    "Wed",
-    "Thurs",
-    "Fri",
-    "Sat",
-    "Sun",
-  ];
+  const daysOfWeek = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
 
-  // Get current date
   const now = new Date();
 
-  // Find Monday of this week
+  // Find Monday
   const firstDayOfWeek = new Date(now);
-  const dayOfWeek = now.getDay(); // Sunday = 0, Monday = 1, ...
-  const diffToMonday = (dayOfWeek + 6) % 7; // shift so Monday = start
+  const dayOfWeek = now.getDay();
+  const diffToMonday = (dayOfWeek + 6) % 7;
+
+  firstDayOfWeek.setHours(0, 0, 0, 0);
   firstDayOfWeek.setDate(now.getDate() - diffToMonday);
 
-  // Build all 7 days
-  const dailySales: dailySalesInterface[] = daysOfWeek.map((day, index) => {
-    const date = new Date(firstDayOfWeek);
-    date.setDate(firstDayOfWeek.getDate() + index);
+  // Build week
+  const dailySales: dailySalesInterface[] = daysOfWeek.map((label) => ({
+    date: label,
+    sales: 0,
+  }));
 
-    return { date: day, sales: 0 };
-  });
+  // Compute range
+  const start = new Date(firstDayOfWeek);
+  start.setHours(0, 0, 0, 0);
 
-  // Add actual sales if the order falls within this week
+  const end = new Date(firstDayOfWeek);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+
   orders.forEach((item) => {
-    const itemDate = new Date(item.date);
-    const start = new Date(firstDayOfWeek);
-    const end = new Date(firstDayOfWeek);
-    end.setDate(start.getDate() + 6);
+    const d = new Date(item.date);
+    d.setHours(0, 0, 0, 0);             // <-- IMPORTANT FIX
 
-    if (itemDate >= start && itemDate <= end) {
-      const weekdayIndex = (itemDate.getDay() + 6) % 7; // convert so Monday=0
-      dailySales[weekdayIndex].sales += item.grandTotal;
+    if (d >= start && d <= end) {
+      const index = (d.getDay() + 6) % 7; // Monday = 0
+      dailySales[index].sales += item.total;
     }
   });
 
   return dailySales;
 };
-
 
 export const getTodaySales = (orders: getOrderInterface[]) => {
 
