@@ -73,6 +73,9 @@ export const toggleOrderStatus= async ( id:string ) => {
     const order = await Order.findById(id)
     if(order?.status == "completed"){
       await Order.findByIdAndUpdate(id, { status : "canceled" })
+    }
+    else if (order?.status == "active"){
+      await Order.findByIdAndUpdate(id, { status : "canceled" })
     } else {
       await Order.findByIdAndUpdate(id, { status : "completed" })
     }

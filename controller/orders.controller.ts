@@ -404,12 +404,30 @@ export const splitOrderontroller = async (request: AuthRequest, response: Respon
 
 
 export const cancelOrderontroller = async (request: AuthRequest, response: Response) => {
+
+    if(!request.id)
+    {
+        response.status(500).send("not authenticated")
+        return
+    }
+
+    const account = await findAccountById(request.id);
+
+    if(!account)
+    {
+        response.status(404).send("account not found");
+        return;
+    }
+
+
     
     const { id } = request.params
 
     await toggleOrderStatus(id)
    
-    response.send("sucess")
+    const orders = await getOrdersByBranch(account.branch, "active");
+
+    response.send(orders)
 }
 
 
